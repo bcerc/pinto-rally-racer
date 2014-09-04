@@ -1,0 +1,231 @@
+$canvas_width: 1000px;
+$canvas_height: 733px;
+
+$level_width: 700px;
+$level_height: 6000px;
+
+$default_camera_view:
+  rotateX(75deg) rotateZ(0deg) translateX(150px) translateY(-5000px) translateZ(-275px);
+
+body {
+  padding: 0;
+  margin: 0;
+  background-color: #333;
+}
+
+.game-container {
+  width: $canvas_width;
+  height: $canvas_height;
+  margin: 0px auto;
+  border: solid 1px #999;
+  overflow: hidden;
+}
+
+#game-canvas {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+}
+
+
+
+.game-scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transform: $default_camera_view;
+  transform-origin: 50% 50%;
+
+  // &::before {
+  //   content: '';
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   width: $level_width;
+  //   height: $level_height;
+  //   background-color: rgba(0,255,0,.1);
+  // }
+  * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+  }
+}
+
+$wheel_size: 16px;
+$wheel_half_size: $wheel_size / 2;
+
+$car_width: 33px;
+$car_height: 33px;
+$car_depth: 100px;
+$car_color: #B3E7AC;
+
+.boxcar {
+  width: $car_width;
+  height: $car_height;
+  transform-style: preserve-3d;
+
+  // -webkit-animation-name: spinZ;
+  // -webkit-animation-duration: 16s;
+  // -webkit-animation-iteration-count: infinite;
+  // -webkit-animation-timing-function: linear;
+
+  .body {
+    transform-style: preserve-3d;
+    display: block;
+    width: 100%;
+    height: $car_depth;
+    background-color: #111;
+  }
+
+  .body-bottom {
+    transform: translateY(27px) translateZ(8px);
+    background-color: #AD9A9A;
+    height: 44px;
+  }
+  .body-top {
+    transform: translateY(48px) translateZ($wheel_half_size + $car_height);
+    height: 28px;
+    background-color: $car_color;
+  }
+  .body-front-windshield {
+    transform: translateY(30px) translateZ(33px) rotateX(45deg);
+    height: 22px;
+    background-color: rgba(122, 131, 120, 0.75);
+  }
+  .body-hood {
+    transform: translateZ(23px) rotateX(6deg);
+    height: 34px;
+    background-color: darken($car_color,8%);
+  }
+  .body-front {
+    transform: translateY(-3.4px) translateZ(17.5px) rotateX(90deg);
+    height: 8px;
+    background-color: darken($car_color,18%);
+  }
+
+  .body-back {
+    transform: translateY(93.8px) translateZ(19px) rotateX(90deg);
+    height: 11px;
+    background-color: $car_color;
+  }
+  .body-back-windshield {
+    transform: translateY(73px) translateZ(32.3px) rotateX(-34deg);
+    height: 28.5px;
+    background-color: rgba(122, 131, 120, 0.75);
+  }
+  .body-left,
+  .body-right,
+  .body-left-top,
+  .body-right-top {
+    width: $car_depth;
+    height: $car_height;
+    background-color: transparent;
+    background-image: url(pinto.svg);
+    background-size: 100%;
+  }
+  .body-left {
+    transform-origin: 0 0;
+    height: 18px;
+    background-clip: content-box;
+    padding-top: 15px;
+    transform: translateZ($wheel_half_size + $car_height) rotateX(-90deg) rotateY(-90deg);
+  }
+  .body-left-top {
+    transform-style: preserve-3d;
+    height: 17px;
+    transform: translateZ($wheel_half_size + $car_height) rotateX(-90deg) rotateY(-90deg);
+    transform-origin: 0 0;
+  }
+
+  .body-right {
+    transform-origin: 0 0;
+    height: 18px;
+    background-clip: content-box;
+    padding-top: 15px;
+    transform: translateX($car_width) translateZ($wheel_half_size + $car_height) rotateX(-90deg) rotateY(-90deg);
+  }
+  .body-right-top {
+    transform-style: preserve-3d;
+    display: none;
+    height: 17px;
+    transform: translateX($car_width) translateZ($wheel_half_size + $car_height) rotateX(-90deg) rotateY(-90deg);
+    transform-origin: 0 0;
+  }
+}
+
+// .wheel {
+//   transform: rotateY(90deg) translateX(-16px);
+//   transform-style: preserve-3d;
+//   &::before,
+//   &::after {
+//     position: absolute;
+//     content: '';
+//     display: block;
+//     border-radius: 200px;
+//     background-color: #444;
+//     width: 16px;
+//     height: 16px;
+//   }
+//   &::after {
+//     transform: translateZ(4px);
+//   }
+// }
+// .wheel-f-l {
+// }
+// .wheel-f-r {
+//   left: auto;
+//   right: 0;
+// }
+// .wheel-r-l {
+//   top: auto;
+//   bottom: 0;
+// }
+// .wheel-r-r {
+//   top: auto;
+//   bottom: 0;
+//   left: auto;
+//   right: 0;
+// }
+
+
+@-webkit-keyframes spinZ {
+  0% {
+    transform: translateX(200px) translateY(5700px) translateZ(10px) rotateZ(0deg);
+  }
+  100% {
+    transform: translateX(200px) translateY(5700px) translateZ(10px) rotateZ(360deg);
+  }
+}
+
+
+.level {
+  width: $level_width;
+  height: $level_height;
+  transform-style: preserve-3d;
+}
+
+.road {
+  width: $level_width;
+  height: $level_height+100px;
+
+  background:
+    radial-gradient(circle, transparent 20%, slategray 20%, slategray 80%, transparent 80%, transparent),
+    radial-gradient(circle, transparent 20%, slategray 20%, slategray 80%, transparent 80%, transparent) 50px 50px,
+    linear-gradient(#A8B1BB 8px, transparent 8px) 0 -4px,
+    linear-gradient(90deg, #A8B1BB 8px, transparent 8px) -4px 0;
+  background-color: slategray;
+  background-size: 100px 100px, 100px 100px, 50px 50px, 50px 50px;
+
+  transform: translateY(0px);
+}
+

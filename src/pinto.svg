@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="300px" height="100px" viewBox="0 0 300 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.0.4 (8053) - http://www.bohemiancoding.com/sketch -->
+    <title>pinto 2</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="car" sketch:type="MSLayerGroup">
+            <path d="M84.2645202,99.6942077 L80.7585816,99.3608454 C80.7914216,98.820531 80.8080808,98.2758473 80.8080808,97.7272727 C80.8080808,83.0833589 68.9368431,71.2121212 54.2929293,71.2121212 C40.7953859,71.2121212 29.6534032,81.2974749 27.9916622,94.3435011 L26.2626263,94.1790956 L-0.19235322,83.3076862 L-0.19235322,59.0909091 L96.969697,49.0471117 L147.474747,-0.135140467 L225.105548,-0.135140467 L299.828362,49.0471117 L299.828362,83.3076862 L268.686869,92.2979798 L266.179811,92.643517 C263.808504,80.4316476 253.056677,71.2121212 240.151515,71.2121212 C225.507601,71.2121212 213.636364,83.0833589 213.636364,97.7272727 C213.636364,98.3888566 213.660594,99.0447812 213.708214,99.6942077 L84.2645202,99.6942077 Z" id="car-2" fill="#B3E7AC" sketch:type="MSShapeGroup"></path>
+            <path d="M111.185093,44.7630603 L196.471551,45.1142282 L192.283183,3.97036774 L147.974866,4.34520991 L111.185093,44.7630603 Z" id="Path" fill-opacity="0.6" fill="#2A2A2A" sketch:type="MSShapeGroup"></path>
+            <path d="M200.747711,45.0481376 L251.394807,42.5889757 L218.181818,3.53535354 L195.208925,3.53535354 L200.747711,45.0481376 Z" id="Path" fill-opacity="0.6" fill="#2A2A2A" sketch:type="MSShapeGroup"></path>
+        </g>
+    </g>
+</svg>

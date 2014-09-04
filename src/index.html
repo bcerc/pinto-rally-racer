@@ -1,0 +1,42 @@
+<html>
+<head>
+  <title>boxcar racer</title>
+  <link rel="stylesheet" href="game.css">
+</head>
+<body>
+  <div class="game-container">
+    <div id="game-canvas">
+      <div id="game-scene" class="game-scene"></div>
+    </div>
+  </div>
+
+  <button onclick="javascript:game.start()">START</button>
+  <button onclick="javascript:game.stop()">STOP</button>
+
+  <template id="boxcar-template">
+    <i class='body body-bottom'></i>
+    <i class='body body-right-top'></i>
+    <i class='body body-right'></i>
+    <i class='body body-left-top'></i>
+    <i class='body body-left'></i>
+    <i class='body body-front'></i>
+    <i class='body body-hood'></i>
+    <i class='body body-front-windshield'></i>
+    <i class='body body-top'></i>
+    <i class='body body-back-windshield'></i>
+    <i class='body body-back'></i>
+
+    <i class='wheel wheel-f-l'></i>
+    <i class='wheel wheel-f-r'></i>
+    <i class='wheel wheel-r-l'></i>
+    <i class='wheel wheel-r-r'></i>
+  </template>
+  <template id="level-template">
+    <b class='road'></b>
+  </template>
+  <script src="game.js"></script>
+  <script>
+    game.start();
+  </script>
+</body>
+</html>

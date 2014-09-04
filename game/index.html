@@ -1,0 +1,27 @@
+<html>
+<head>
+  <title>boxcar racer</title>
+  <link rel="stylesheet" href="game.css">
+</head>
+<body>
+  <div class="game-container">
+    <div id="game-canvas">
+      <div id="game-scene" class="game-scene"></div>
+    </div>
+  </div>
+
+  <template id="boxcar-template">
+    <i class='wheel wheel-front-left'></i>
+    <i class='wheel wheel-front-right'></i>
+    <i class='wheel wheel-back-left'></i>
+    <i class='wheel wheel-back-right'></i>
+  </template>
+  <template id="level-template">
+    <b>level</b>
+  </template>
+  <script src="game.js"></script>
+  <script>
+    game.start();
+  </script>
+</body>
+</html>
