@@ -1,6 +1,6 @@
 <html>
 <head>
-  <title>boxcar racer</title>
+  <title>Pinto Rally Racer</title>
   <link rel="stylesheet" href="game.css">
 </head>
 <body>
@@ -10,14 +10,29 @@
     </div>
   </div>
 
-  <template id="boxcar-template">
-    <i class='wheel wheel-front-left'></i>
-    <i class='wheel wheel-front-right'></i>
-    <i class='wheel wheel-back-left'></i>
-    <i class='wheel wheel-back-right'></i>
+  <button onclick="javascript:game.start()">START</button>
+  <button onclick="javascript:game.stop()">STOP</button>
+
+  <template id="car-template">
+    <i class='body body-bottom'></i>
+    <i class='body body-right-top'></i>
+    <i class='body body-right'></i>
+    <i class='body body-left-top'></i>
+    <i class='body body-left'></i>
+    <i class='body body-front'></i>
+    <i class='body body-hood'></i>
+    <i class='body body-front-windshield'></i>
+    <i class='body body-top'></i>
+    <i class='body body-back-windshield'></i>
+    <i class='body body-back'></i>
+
+    <i class='wheel wheel-f-l'></i>
+    <i class='wheel wheel-f-r'></i>
+    <i class='wheel wheel-r-l'></i>
+    <i class='wheel wheel-r-r'></i>
   </template>
   <template id="level-template">
-    <b>level</b>
+    <b class='road'></b>
   </template>
   <script src="game.js"></script>
   <script>

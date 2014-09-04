@@ -1,11 +1,12 @@
 body {
   padding: 0;
+  margin: 0;
   background-color: #333; }
 
 .game-container {
   width: 1000px;
   height: 733px;
-  margin: 20px auto;
+  margin: 0px auto;
   border: solid 1px #999;
   overflow: hidden; }
 
@@ -25,40 +26,88 @@ body {
   width: 0;
   height: 0;
   transform-style: preserve-3d;
-  transform: rotateX(65deg) rotateZ(-180deg) translateX(-850px) translateY(-650px) translateZ(-366.5px); }
-  .game-scene::before {
-    content: '';
+  transform: rotateX(75deg) rotateZ(0deg) translateX(150px) translateY(-5000px) translateZ(-275px);
+  transform-origin: 50% 50%; }
+  .game-scene * {
     position: absolute;
     top: 0;
     left: 0;
-    width: 700px;
-    height: 29000px;
-    background-color: rgba(0, 255, 0, 0.1); }
+    display: block; }
 
-.boxcar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 50px;
-  height: 50px;
-  background-color: #ff0000;
+.car {
+  width: 33px;
+  height: 33px;
   transform-style: preserve-3d; }
+  .car .body {
+    transform-style: preserve-3d;
+    display: block;
+    width: 100%;
+    height: 100px;
+    background-color: #111; }
+  .car .body-bottom {
+    transform: translateY(27px) translateZ(8px);
+    background-color: #AD9A9A;
+    height: 44px; }
+  .car .body-top {
+    transform: translateY(48px) translateZ(41px);
+    height: 28px;
+    background-color: #b3e7ac; }
+  .car .body-front-windshield {
+    transform: translateY(30px) translateZ(33px) rotateX(45deg);
+    height: 22px;
+    background-color: rgba(122, 131, 120, 0.75); }
+  .car .body-hood {
+    transform: translateZ(23px) rotateX(6deg);
+    height: 34px;
+    background-color: #96de8c; }
+  .car .body-front {
+    transform: translateY(-3.4px) translateZ(17.5px) rotateX(90deg);
+    height: 8px;
+    background-color: #72d265; }
+  .car .body-back {
+    transform: translateY(93.8px) translateZ(19px) rotateX(90deg);
+    height: 11px;
+    background-color: #b3e7ac; }
+  .car .body-back-windshield {
+    transform: translateY(73px) translateZ(32.3px) rotateX(-34deg);
+    height: 28.5px;
+    background-color: rgba(122, 131, 120, 0.75); }
+  .car .body-left,
+  .car .body-right,
+  .car .body-left-top,
+  .car .body-right-top {
+    width: 100px;
+    height: 33px;
+    background-color: transparent;
+    background-image: url(pinto.svg);
+    background-size: 100%; }
+  .car .body-left-top {
+    transform-style: preserve-3d;
+    height: 17px;
+    transform: translateZ(41px) rotateX(-90deg) rotateY(-90deg);
+    transform-origin: 0 0; }
+  .car .body-right-top {
+    transform-style: preserve-3d;
+    display: none;
+    height: 17px;
+    transform: translateX(33px) translateZ(41px) rotateX(-90deg) rotateY(-90deg);
+    transform-origin: 0 0; }
 
-@-webkit-keyframes cubeRotate {
+@-webkit-keyframes spinZ {
   0% {
-    transform: translateX(50px) translateY(50px) translateZ(1px); }
-
-  50% {
-    transform: translateX(250px) translateY(500px) translateZ(1px); }
+    transform: translateX(200px) translateY(5700px) translateZ(10px) rotateZ(0deg); }
 
   100% {
-    transform: translateX(50px) translateY(50px) translateZ(1px); } }
+    transform: translateX(200px) translateY(5700px) translateZ(10px) rotateZ(360deg); } }
 .level {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 700px;
-  height: 29000px;
-  background-color: #ccc;
-  transform-origin: 50% 0;
+  height: 6000px;
   transform-style: preserve-3d; }
+
+.road {
+  width: 700px;
+  height: 6100px;
+  background: radial-gradient(circle, transparent 20%, slategray 20%, slategray 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, slategray 20%, slategray 80%, transparent 80%, transparent) 50px 50px, linear-gradient(#a8b1bb 8px, transparent 8px) 0 -4px, linear-gradient(90deg, #a8b1bb 8px, transparent 8px) -4px 0;
+  background-color: slategray;
+  background-size: 100px 100px, 100px 100px, 50px 50px, 50px 50px;
+  transform: translateY(0px); }

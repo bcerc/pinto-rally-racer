@@ -26,7 +26,7 @@ body {
   width: 0;
   height: 0;
   transform-style: preserve-3d;
-  transform: rotateX(75deg) rotateZ(0deg) translateX(150px) translateY(-5000px) translateZ(-275px);
+  transform: rotateX(75deg) rotateZ(0deg) translateX(269px) translateY(-4907px) translateZ(-205px);
   transform-origin: 50% 50%; }
   .game-scene * {
     position: absolute;
@@ -34,76 +34,70 @@ body {
     left: 0;
     display: block; }
 
-.boxcar {
+.car {
   width: 33px;
   height: 33px;
   transform-style: preserve-3d; }
-  .boxcar .body {
+  .car .body {
     transform-style: preserve-3d;
     display: block;
     width: 100%;
-    height: 100px;
-    background-color: #111; }
-  .boxcar .body-bottom {
+    height: 100px; }
+  .car .body-bottom {
     transform: translateY(27px) translateZ(8px);
     background-color: #AD9A9A;
     height: 44px; }
-  .boxcar .body-top {
-    transform: translateY(48px) translateZ(41px);
+  .car .body-top {
+    transform: translateX(2px) translateY(48px) translateZ(39px);
     height: 28px;
+    width: 29px;
     background-color: #b3e7ac; }
-  .boxcar .body-front-windshield {
-    transform: translateY(30px) translateZ(33px) rotateX(45deg);
-    height: 22px;
-    background-color: rgba(122, 131, 120, 0.75); }
-  .boxcar .body-hood {
+  .car .body-front-windshield {
+    transform-origin: 0 0;
+    transform: translateY(34px) translateZ(25px) rotateX(45deg);
+    height: 20px;
+    background-image: url(pinto-front-windshield.svg); }
+  .car .body-hood {
     transform: translateZ(23px) rotateX(6deg);
     height: 34px;
     background-color: #96de8c; }
-  .boxcar .body-front {
+  .car .body-front {
     transform: translateY(-3.4px) translateZ(17.5px) rotateX(90deg);
     height: 8px;
     background-color: #72d265; }
-  .boxcar .body-back {
+  .car .body-back {
     transform: translateY(93.8px) translateZ(19px) rotateX(90deg);
     height: 11px;
-    background-color: #b3e7ac; }
-  .boxcar .body-back-windshield {
-    transform: translateY(73px) translateZ(32.3px) rotateX(-34deg);
-    height: 28.5px;
-    background-color: rgba(122, 131, 120, 0.75); }
-  .boxcar .body-left,
-  .boxcar .body-right,
-  .boxcar .body-left-top,
-  .boxcar .body-right-top {
-    width: 100px;
-    height: 33px;
+    background-color: #9de094; }
+  .car .body-back-windshield {
+    transform-origin: 0 0;
+    transform: translateY(74px) translateZ(39px) rotateX(-31deg);
+    height: 29px;
+    background-image: url(pinto-back-windshield.svg); }
+  .car .body-left,
+  .car .body-right,
+  .car .body-left-top,
+  .car .body-right-top {
+    transform-origin: 0 0;
+    width: 33px;
+    height: 100px;
     background-color: transparent;
     background-image: url(pinto.svg);
-    background-size: 100%; }
-  .boxcar .body-left {
-    transform-origin: 0 0;
-    height: 18px;
-    background-clip: content-box;
-    padding-top: 15px;
-    transform: translateZ(41px) rotateX(-90deg) rotateY(-90deg); }
-  .boxcar .body-left-top {
-    transform-style: preserve-3d;
-    height: 17px;
-    transform: translateZ(41px) rotateX(-90deg) rotateY(-90deg);
-    transform-origin: 0 0; }
-  .boxcar .body-right {
-    transform-origin: 0 0;
-    height: 18px;
-    background-clip: content-box;
-    padding-top: 15px;
-    transform: translateX(33px) translateZ(41px) rotateX(-90deg) rotateY(-90deg); }
-  .boxcar .body-right-top {
-    transform-style: preserve-3d;
-    display: none;
-    height: 17px;
-    transform: translateX(33px) translateZ(41px) rotateX(-90deg) rotateY(-90deg);
-    transform-origin: 0 0; }
+    background-size: 33px; }
+  .car .body-left {
+    width: 17px;
+    transform: translateX(0) translateZ(8px) rotateY(-90deg); }
+  .car .body-left-top {
+    width: 15px;
+    transform: translateX(0) translateZ(25px) rotateY(-80deg);
+    background-position: right 0; }
+  .car .body-right {
+    width: 17px;
+    transform: translateX(33px) translateZ(8px) rotateY(-90deg); }
+  .car .body-right-top {
+    width: 15px;
+    transform: translateX(33px) translateZ(25px) rotateY(-100deg);
+    background-position: right 0; }
 
 @-webkit-keyframes spinZ {
   0% {

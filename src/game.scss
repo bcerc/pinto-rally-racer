@@ -5,7 +5,8 @@ $level_width: 700px;
 $level_height: 6000px;
 
 $default_camera_view:
-  rotateX(75deg) rotateZ(0deg) translateX(150px) translateY(-5000px) translateZ(-275px);
+  // rotateX(75deg) rotateZ(0deg) translateX(150px) translateY(-5000px) translateZ(-275px)
+  rotateX(75deg) rotateZ(0deg) translateX(269px) translateY(-4907px) translateZ(-205px); // close up
 
 body {
   padding: 0;
@@ -69,8 +70,8 @@ $car_height: 33px;
 $car_depth: 100px;
 $car_color: #B3E7AC;
 
-.boxcar {
-  width: $car_width;
+.car {
+  width: $car_height;
   height: $car_height;
   transform-style: preserve-3d;
 
@@ -84,7 +85,6 @@ $car_color: #B3E7AC;
     display: block;
     width: 100%;
     height: $car_depth;
-    background-color: #111;
   }
 
   .body-bottom {
@@ -93,14 +93,16 @@ $car_color: #B3E7AC;
     height: 44px;
   }
   .body-top {
-    transform: translateY(48px) translateZ($wheel_half_size + $car_height);
+    transform: translateX(2px) translateY(48px) translateZ(39px);
     height: 28px;
+    width: 29px;
     background-color: $car_color;
   }
   .body-front-windshield {
-    transform: translateY(30px) translateZ(33px) rotateX(45deg);
-    height: 22px;
-    background-color: rgba(122, 131, 120, 0.75);
+    transform-origin: 0 0;
+    transform: translateY(34px) translateZ(25px) rotateX(45deg);
+    height: 20px;
+    background-image: url(pinto-front-windshield.svg);
   }
   .body-hood {
     transform: translateZ(23px) rotateX(6deg);
@@ -116,50 +118,43 @@ $car_color: #B3E7AC;
   .body-back {
     transform: translateY(93.8px) translateZ(19px) rotateX(90deg);
     height: 11px;
-    background-color: $car_color;
+    background-color: darken($car_color,6%);
   }
   .body-back-windshield {
-    transform: translateY(73px) translateZ(32.3px) rotateX(-34deg);
-    height: 28.5px;
-    background-color: rgba(122, 131, 120, 0.75);
+    transform-origin: 0 0;
+    transform: translateY(74px) translateZ(39px) rotateX(-31deg);
+    height: 29px;
+    background-image: url(pinto-back-windshield.svg);
   }
   .body-left,
   .body-right,
   .body-left-top,
   .body-right-top {
-    width: $car_depth;
-    height: $car_height;
+    transform-origin: 0 0;
+    width: $car_height;
+    height: $car_depth;
     background-color: transparent;
     background-image: url(pinto.svg);
-    background-size: 100%;
+    background-size: $car_height;
   }
   .body-left {
-    transform-origin: 0 0;
-    height: 18px;
-    background-clip: content-box;
-    padding-top: 15px;
-    transform: translateZ($wheel_half_size + $car_height) rotateX(-90deg) rotateY(-90deg);
+    width: 17px;
+    transform: translateX(0) translateZ($wheel_half_size) rotateY(-90deg);
   }
   .body-left-top {
-    transform-style: preserve-3d;
-    height: 17px;
-    transform: translateZ($wheel_half_size + $car_height) rotateX(-90deg) rotateY(-90deg);
-    transform-origin: 0 0;
+    width: 15px;
+    transform:  translateX(0) translateZ(25px) rotateY(-80deg);
+    background-position: right 0;
   }
 
   .body-right {
-    transform-origin: 0 0;
-    height: 18px;
-    background-clip: content-box;
-    padding-top: 15px;
-    transform: translateX($car_width) translateZ($wheel_half_size + $car_height) rotateX(-90deg) rotateY(-90deg);
+    width: 17px;
+    transform: translateX($car_height) translateZ($wheel_half_size) rotateY(-90deg);
   }
   .body-right-top {
-    transform-style: preserve-3d;
-    display: none;
-    height: 17px;
-    transform: translateX($car_width) translateZ($wheel_half_size + $car_height) rotateX(-90deg) rotateY(-90deg);
-    transform-origin: 0 0;
+    width: 15px;
+    transform:  translateX($car_height) translateZ(25px) rotateY(-100deg);
+    background-position: right 0;
   }
 }
 

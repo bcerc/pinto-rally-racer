@@ -23,10 +23,10 @@ module.exports = function(grunt) {
     },
     copy: {
       game: {
-        files: [{ cwd: 'src/', flatten: true, expand: true, src: ['index.html','game.css','game.js'], dest: 'game/', filter: 'isFile'}]
+        files: [{ cwd: 'src/', flatten: true, expand: true, src: ['index.html','game.css','game.js', 'pinto.svg'], dest: 'game/', filter: 'isFile'}]
       },
       gameMin: {
-        files: [{ cwd: 'src/', flatten: true, expand: true, src: ['index.html'], dest: 'game-min/', filter: 'isFile'}]
+        files: [{ cwd: 'src/', flatten: true, expand: true, src: ['index.html','game.css','game.js', 'pinto.svg'], dest: 'game-min/', filter: 'isFile'}]
       }
     },
     uglify: {

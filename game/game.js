@@ -7,7 +7,7 @@ var game = (function(){
   var _canvas = document.querySelector('#game-canvas'),
       _scene = document.querySelector('#game-scene'),
       _templates = {
-        boxcar: document.querySelector('#boxcar-template'),
+        car: document.querySelector('#car-template'),
         level: document.querySelector('#level-template')
       },
       _startTime = null,
@@ -41,90 +41,78 @@ var game = (function(){
   }
 
   function Car () {
-    Templatable(this, 'boxcar');
+    Templatable(this, 'car');
     Positionable(this);
     Rotatable(this);
     Scalable(this);
     Renderable(this);
     Physicsable(this);
 
-    this.width = 50;
-    this.height = 50;
-    this.pos.y = 260;
-    this.pos.z = 1;
-    this.accel = 0.5;
+    this.wheels = {
+      fl: {
+        el: this.el.getElementsByClassName('wheel-f-l')[0]
+      },
+      fr: {
+        el: this.el.getElementsByClassName('wheel-f-r')[0]
+      },
+      rl: {
+        el: this.el.getElementsByClassName('wheel-r-l')[0]
+      },
+      rr: {
+        el: this.el.getElementsByClassName('wheel-r-r')[0]
+      }
+    };
+
+    this.width = 33;
+    this.height = 100;
+    this.pos.x = 200;
+    this.pos.y = 5700;
+    this.pos.z = 10;
+    this.speed = 18;
+    this.responsiveness = 1;
+    this.straighteningRate = 0.98;
+    this.maxRotation = 30;
 
     this.el.style.width = this.width + 'px';
     this.el.style.height = this.height + 'px';
-
-
 
     this.update = function () {
       var leanOrigin = '50% 50%';
       if (this.vel) {
-        this.pos.x += this.vel.x;
-        // o.pos.y += o.vel.y;
-        // o.pos.z += o.vel.z;
 
-        this.vel.x = this.vel.x * this.friction;
-        this.rotation.y = this.vel.x * 4;   // lean
-        this.rotation.z = -this.vel.x * 6;  // turn
+        //--- TURN
+        this.rotation.z = this.rotation.z >  this.maxRotation ?  this.maxRotation : this.rotation.z;
+        this.rotation.z = this.rotation.z < -this.maxRotation ? -this.maxRotation : this.rotation.z;
 
-        if (this.rotation.y > 1) {
-          leanOrigin = '100% 50%';
-        } else if (this.rotation.y < -1) {
-          leanOrigin = '0% 50%';
-        }
+        //--- TURN LEVEL
+        _level.rotation.z = this.rotation.z * 0.02;
 
-        this.el.style.transformOrigin = leanOrigin;
+        // derive vel from turning angle
+        this.vel.x = -this.speed * this.rotation.z / 90;
+        // increment pos
+        this.pos.x -= this.vel.x;
 
-        // o.vel.y = o.vel.y * o.friction;
-        // o.vel.z = o.vel.z * o.friction;
+
+        //--- LEAN
+        // this.rotation.y = this.vel.x * 4;
+        // leanOrigin = this.rotation.y >  1 ? '100% 50%' : leanOrigin;
+        // leanOrigin = this.rotation.y < -1 ? '0% 50%' : leanOrigin;
+        // this.el.style.transformOrigin = leanOrigin;
       }
       return this;
     };
 
+    this.turnWheels = function (angle) {
+      var rad = (angle / this.maxRotation * Math.PI) - Math.PI*0.5;
+      var tireRotation = Math.cos(rad) * this.maxRotation;
+
+      this.wheels.fl.el.style.transform = 'rotateY(90deg) translateX(-16px) rotateX(' + tireRotation + 'deg)';
+      this.wheels.fr.el.style.transform = 'rotateY(90deg) translateX(-16px) rotateX(' + tireRotation + 'deg)';
+      return this;
+    };
 
     return this;
   }
-
-  function Level () {
-    Templatable(this, 'level');
-    Collectable(this,'children');
-    Positionable(this);
-    Rotatable(this);
-    Renderable(this);
-
-    this.width = 700;
-    this.height = 29000;
-    this.rotation.x = -15;
-
-    this.el.style.width = this.width + 'px';
-    this.el.style.height = this.height + 'px';
-
-    return this;
-  }
-
-  return {
-    start: function () {
-      log('game:start');
-      _startTime = time();
-      initObjects();
-      this.step();
-    },
-    stop: function () {
-      log('game:stop');
-      cancelAnimationFrame(this.requestId);
-      _stopTime = time();
-    },
-    step: function (timestamp) {
-      var progress;
-      if (_startTime === null) _startTime = timestamp;
-      progress = timestamp - _startTime;
-      this.requestId = requestAnimationFrame(this.step.bind(this));
-      onStep();
-    }
-  };
 
   /*
    *  CONTROLLER
@@ -177,15 +165,86 @@ var game = (function(){
       isLeft: _isLeft,
       isRight: _isRight,
       update: function () {
+        var angle = 0,
+          wheelAngle;
+
         if (_isLeft) {
-          _player.vel.x += _player.accel;
+          angle = -_player.responsiveness;
+        } else if (_isRight) {
+          angle = _player.responsiveness;
+        } else {
+          _player.rotation.z *= _player.straighteningRate;
         }
-        if (_isRight) {
-          _player.vel.x -= _player.accel;
-        }
+
+        _player.rotation.z += angle;
+
+        wheelAngle = _isLeft && _player.rotation.z < 0 || _isRight && _player.rotation.z > 0 ? -_player.rotation.z : _player.rotation.z * 0.15;
+        // wheelAngle = _player.rotation.z * -0.5;
       }
     };
   }
+
+
+  /*
+   *  LEVEL
+   */
+
+  function Level () {
+    Templatable(this, 'level');
+    Collectable(this,'children');
+    Positionable(this);
+    Rotatable(this);
+    Renderable(this);
+
+    this.width = 700;
+    this.height = 6000;
+    this.rotation.x = 0;
+    this.pos.y = 0;
+
+    this.el.style.width = this.width + 'px';
+    this.el.style.height = this.height + 'px';
+
+    this.road = {
+      el: this.el.getElementsByClassName('road')[0]
+    };
+    Positionable(this.road);
+
+
+
+    this.update = function () {
+      var levelSpeed = _player.speed - Math.abs(_player.vel.x);
+      this.road.pos.y -= levelSpeed;
+      this.road.pos.y = this.road.pos.y < -100 ? this.road.pos.y%100 : this.road.pos.y;
+      this.road.el.style.transform = 'translateY(' + -this.road.pos.y + 'px) translateZ(0px)';
+      return this;
+    };
+
+    return this;
+  }
+
+  return {
+    start: function () {
+      log('game:start');
+      if (!this.hasStarted) {
+        _startTime = time();
+        initObjects();
+      }
+      this.step();
+      this.hasStarted = true;
+    },
+    stop: function () {
+      log('game:stop');
+      cancelAnimationFrame(this.requestId);
+      _stopTime = time();
+    },
+    step: function (timestamp) {
+      var progress;
+      if (_startTime === null) _startTime = timestamp;
+      progress = timestamp - _startTime;
+      this.requestId = requestAnimationFrame(this.step.bind(this));
+      onStep();
+    }
+  };
 
 
   /*
@@ -291,15 +350,6 @@ var game = (function(){
 
   function Renderable (o) {
     o.update = function () {
-      if (o.vel) {
-        o.pos.x += o.vel.x;
-        // o.pos.y += o.vel.y;
-        // o.pos.z += o.vel.z;
-
-        o.vel.x = o.vel.x * o.friction;
-        // o.vel.y = o.vel.y * o.friction;
-        // o.vel.z = o.vel.z * o.friction;
-      }
       return o;
     };
     o.render = function () {
@@ -335,8 +385,8 @@ var game = (function(){
                               'scaleY(' + s.y + ') ' +
                               'scaleZ(' + s.z + ') ' +
                               'rotateX(' + r.x + 'deg) ' +
-                              'rotateZ(' + r.z + 'deg) ' +
                               'rotateY(' + r.y + 'deg) ' +
+                              'rotateZ(' + r.z + 'deg) ' +
                               '';
 
 
@@ -352,6 +402,14 @@ var game = (function(){
 
   function time() {
     return new Date().getTime();
+  }
+
+  function deg2rad(deg) {
+    return deg * (Math.PI/180);
+  }
+
+  function rad2deg(rad) {
+    return rad * (180/Math.PI);
   }
 
   function log() {

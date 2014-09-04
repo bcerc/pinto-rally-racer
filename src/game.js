@@ -7,7 +7,7 @@ var game = (function(){
   var _canvas = document.querySelector('#game-canvas'),
       _scene = document.querySelector('#game-scene'),
       _templates = {
-        boxcar: document.querySelector('#boxcar-template'),
+        car: document.querySelector('#car-template'),
         level: document.querySelector('#level-template')
       },
       _startTime = null,
@@ -41,7 +41,7 @@ var game = (function(){
   }
 
   function Car () {
-    Templatable(this, 'boxcar');
+    Templatable(this, 'car');
     Positionable(this);
     Rotatable(this);
     Scalable(this);
