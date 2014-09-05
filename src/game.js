@@ -1,4 +1,5 @@
 Element.prototype.on = Element.prototype.addEventListener;
+window.toInt = window.parseInt;
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.oRequestAnimationFrame;
 window.cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame || window.oCancelAnimationFrame;
 window.Matrix = window.WebKitCSSMatrix || window.MSCSSMatrix || window.CSSMatrix;
@@ -8,23 +9,35 @@ var game = (function(){
       _scene = document.querySelector('#game-scene'),
       _templates = {
         car: document.querySelector('#car-template'),
-        level: document.querySelector('#level-template')
+        level: document.querySelector('#level-template'),
+        wheel: document.querySelector('#wheel-template')
       },
       _startTime = null,
       _player,
+      _playerShadow,
       _level,
       _playerController;
 
 
   function initObjects () {
     _player = new Car();
+    _playerShadow = new Shadow(
+      'car-shadow',
+      _player,
+      {
+        padding: 5
+      });
+
+    console.log('_playerShadow',_playerShadow);
     _level = new Level();
     _playerController = new PlayerController(_player);
 
     _level.add(_player,'children');
+    _level.add(_playerShadow,'children');
     _scene.appendChild(_level.el);
 
     window.player = _player;
+    window.playerShadow = _playerShadow;
     window.level = _level;
   }
 
@@ -35,10 +48,48 @@ var game = (function(){
       .update()
       .render();
 
+    _playerShadow
+      .update()
+      .render();
+
+
     _level
       .update()
       .render();
   }
+
+  function Shadow (shadowType,target, options) {
+    this.target = target;
+    this.options = options || this.defaults;
+
+    Positionable(this);
+    Rotatable(this);
+    Scalable(this);
+    Renderable(this);
+
+    this.el = document.createElement('div');
+    this.el.classList.add('shadow');
+    this.el.classList.add(shadowType);
+
+    this.el.style.width = toInt(this.target.el.style.width) + this.options.padding * 2 + 'px';
+    this.el.style.height = toInt(this.target.el.style.height) + this.options.padding * 2 + 'px';
+
+    this.pos.z = 1;
+
+    this.update = function () {
+      this.pos.x = this.target.pos.x - this.options.padding;
+      this.pos.y = this.target.pos.y - this.options.padding;
+      this.rotation.x = this.target.rotation.x;
+      // this.rotation.y = this.target.rotation.y;
+      this.rotation.z = this.target.rotation.z;
+
+      return this;
+    };
+    return this;
+  }
+  Shadow.prototype.defaults = {
+    padding: 10
+  };
 
   function Car () {
     Templatable(this, 'car');
@@ -63,11 +114,17 @@ var game = (function(){
       }
     };
 
+
+    this.wheels.fl.el.appendChild(_templates.wheel.content.cloneNode(true));
+    this.wheels.fr.el.appendChild(_templates.wheel.content.cloneNode(true));
+    this.wheels.rl.el.appendChild(_templates.wheel.content.cloneNode(true));
+    this.wheels.rr.el.appendChild(_templates.wheel.content.cloneNode(true));
+
     this.width = 33;
     this.height = 100;
     this.pos.x = 200;
     this.pos.y = 5700;
-    this.pos.z = 10;
+    this.pos.z = 1;
     this.speed = 18;
     this.responsiveness = 1;
     this.straighteningRate = 0.98;
@@ -94,10 +151,10 @@ var game = (function(){
 
 
         //--- LEAN
-        // this.rotation.y = this.vel.x * 4;
-        // leanOrigin = this.rotation.y >  1 ? '100% 50%' : leanOrigin;
-        // leanOrigin = this.rotation.y < -1 ? '0% 50%' : leanOrigin;
-        // this.el.style.transformOrigin = leanOrigin;
+        this.rotation.y = this.vel.x * 2;
+        leanOrigin = this.rotation.y >  1 ? '100% 50%' : leanOrigin;
+        leanOrigin = this.rotation.y < -1 ? '0% 50%' : leanOrigin;
+        this.el.style.transformOrigin = leanOrigin;
       }
       return this;
     };
@@ -184,6 +241,19 @@ var game = (function(){
     };
   }
 
+
+  /*
+   *  WHEEL
+   */
+
+  function Wheel () {
+    Templatable(this, 'wheel');
+    Positionable(this);
+    Rotatable(this);
+    Renderable(this);
+
+    return this;
+  }
 
   /*
    *  LEVEL
@@ -375,9 +445,6 @@ var game = (function(){
       //                        '0,0,' + s.z + ',0,' +
       //                        p.x + ',' + p.y + ',' + p.z + ',1)';
 
-
-
-
       o.el.style.transform = 'translateX(' + p.x + 'px) ' +
                               'translateY(' + p.y + 'px) ' +
                               'translateZ(' + p.z + 'px) ' +
@@ -385,8 +452,8 @@ var game = (function(){
                               'scaleY(' + s.y + ') ' +
                               'scaleZ(' + s.z + ') ' +
                               'rotateX(' + r.x + 'deg) ' +
-                              'rotateY(' + r.y + 'deg) ' +
                               'rotateZ(' + r.z + 'deg) ' +
+                              'rotateY(' + r.y + 'deg) ' +
                               '';
 
 

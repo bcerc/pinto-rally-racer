@@ -11,7 +11,7 @@
             <mask id="mask-2" sketch:name="Rectangle 1" fill="white">
                 <use xlink:href="#path-1"></use>
             </mask>
-            <use id="Rectangle-1" fill="#666666" sketch:type="MSShapeGroup" xlink:href="#path-1"></use>
+            <use id="Rectangle-1" stroke="#B3E7AC" stroke-width="2" fill="#8C8C8C" sketch:type="MSShapeGroup" xlink:href="#path-1"></use>
             <rect id="Rectangle-2" fill="#B3E7AC" sketch:type="MSShapeGroup" mask="url(#mask-2)" x="-9" y="20" width="50" height="15"></rect>
         </g>
     </g>

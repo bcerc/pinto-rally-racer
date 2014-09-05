@@ -45,15 +45,6 @@ body {
   transform: $default_camera_view;
   transform-origin: 50% 50%;
 
-  // &::before {
-  //   content: '';
-  //   position: absolute;
-  //   top: 0;
-  //   left: 0;
-  //   width: $level_width;
-  //   height: $level_height;
-  //   background-color: rgba(0,255,0,.1);
-  // }
   * {
     position: absolute;
     top: 0;
@@ -62,16 +53,28 @@ body {
   }
 }
 
-$wheel_size: 16px;
-$wheel_half_size: $wheel_size / 2;
+$rim_color: #aaa;
+$rim_size: 10px;
+$wheel_color: #666;
+$wheel_diameter: 16px;
+$wheel_width: 6px;
+$wheel_radius: $wheel_diameter / 2;
 
 $car_width: 33px;
 $car_height: 33px;
 $car_depth: 100px;
 $car_color: #B3E7AC;
+$car_chrome_color: #aaa;
 
+.shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  background-color: rgba(0,0,0,.2);
+}
 .car {
-  width: $car_height;
+  width: $car_width;
   height: $car_height;
   transform-style: preserve-3d;
 
@@ -119,6 +122,15 @@ $car_color: #B3E7AC;
     transform: translateY(93.8px) translateZ(19px) rotateX(90deg);
     height: 11px;
     background-color: darken($car_color,6%);
+
+    &::before {
+      content: '';
+      display: block;
+      bottom: 0;
+      width: 100%;
+      height: 40%;
+      background-color: $car_chrome_color;
+    }
   }
   .body-back-windshield {
     transform-origin: 0 0;
@@ -139,7 +151,7 @@ $car_color: #B3E7AC;
   }
   .body-left {
     width: 17px;
-    transform: translateX(0) translateZ($wheel_half_size) rotateY(-90deg);
+    transform: translateX(0) translateZ($wheel_radius) rotateY(-90deg);
   }
   .body-left-top {
     width: 15px;
@@ -149,7 +161,7 @@ $car_color: #B3E7AC;
 
   .body-right {
     width: 17px;
-    transform: translateX($car_height) translateZ($wheel_half_size) rotateY(-90deg);
+    transform: translateX($car_height) translateZ($wheel_radius) rotateY(-90deg);
   }
   .body-right-top {
     width: 15px;
@@ -158,39 +170,129 @@ $car_color: #B3E7AC;
   }
 }
 
-// .wheel {
-//   transform: rotateY(90deg) translateX(-16px);
-//   transform-style: preserve-3d;
-//   &::before,
-//   &::after {
-//     position: absolute;
-//     content: '';
-//     display: block;
-//     border-radius: 200px;
-//     background-color: #444;
-//     width: 16px;
-//     height: 16px;
-//   }
-//   &::after {
-//     transform: translateZ(4px);
-//   }
-// }
-// .wheel-f-l {
-// }
-// .wheel-f-r {
-//   left: auto;
-//   right: 0;
-// }
-// .wheel-r-l {
-//   top: auto;
-//   bottom: 0;
-// }
-// .wheel-r-r {
-//   top: auto;
-//   bottom: 0;
-//   left: auto;
-//   right: 0;
-// }
+
+.wheel {
+  transform-style: preserve-3d;
+  &::before,
+  &::after {
+    position: absolute;
+    content: '';
+    display: block;
+    top: 0;
+    left: 0;
+    border-radius: 200px;
+    background-color: $wheel_color;
+    width: $wheel_diameter;
+    height: $wheel_diameter;
+    transform: rotateY(90deg) translateY(-$wheel_radius) translateZ(0px);
+  }
+  &::after {
+    transform: rotateY(90deg) translateY(-$wheel_radius) translateZ($wheel_width - $wheel_radius/2);
+  }
+  .rim {
+    position: absolute;
+    content: '';
+    display: block;
+    top: 0;
+    left: 0;
+    &::before,
+    &::after {
+      position: absolute;
+      content: '';
+      display: block;
+      border-radius: 200px;
+      background-color: $rim_color;
+      width: $rim_size;
+      height: $rim_size;
+      transform: rotateY(90deg) translateY(-$rim_size/2) translateZ(-0.5px);
+
+    }
+    &::after {
+      transform: rotateY(90deg) translateY(-$rim_size/2) translateZ($wheel_width + 0.5px);
+    }
+  }
+  .f {
+    transform-style: preserve-3d;
+    &::before,
+    &::after {
+      transform-style: preserve-3d;
+      position: absolute;
+      top: -3px;
+      left: 0;
+      content: '';
+      display: block;
+      background-color: darken($wheel_color,3%);
+      width: $wheel_width;
+      height: 6px;
+    }
+  }
+  .f1 {
+    transform: translateX($rim_size/2) rotateX(360deg * 0/12);
+    &::before {
+      transform: translateZ($wheel_radius);
+    }
+    &::after {
+      transform: translateZ(-$wheel_radius);
+    }
+  }
+  .f2 {
+    transform: translateX($rim_size/2) rotateX(360deg * 1/12);
+    &::before {
+      transform: translateZ($wheel_radius);
+    }
+    &::after {
+      transform: translateZ(-$wheel_radius);
+    }
+  }
+  .f3 {
+    transform: translateX($rim_size/2) rotateX(360deg * 2/12);
+    &::before {
+      transform: translateZ($wheel_radius);
+    }
+    &::after {
+      transform: translateZ(-$wheel_radius);
+    }
+  }
+  .f4 {
+    transform: translateX($rim_size/2) rotateX(360deg * 3/12);
+    &::before {
+      transform: translateZ($wheel_radius);
+    }
+    &::after {
+      transform: translateZ(-$wheel_radius);
+    }
+  }
+  .f5 {
+    transform: translateX($rim_size/2) rotateX(360deg * 4/12);
+    &::before {
+      transform: translateZ($wheel_radius);
+    }
+    &::after {
+      transform: translateZ(-$wheel_radius);
+    }
+  }
+  .f6 {
+    transform: translateX($rim_size/2) rotateX(360deg * 5/12);
+    &::before {
+      transform: translateZ($wheel_radius);
+    }
+    &::after {
+      transform: translateZ(-$wheel_radius);
+    }
+  }
+}
+.wheel-f-l {
+  transform: translateX($wheel_width + $wheel_radius/2) translateY(18px) translateZ(8px) rotateY(180deg);
+}
+.wheel-f-r {
+  transform: translateX($car_width - $wheel_width - $wheel_radius/2) translateY(18px) translateZ(8px);
+}
+.wheel-r-l {
+  transform: translateX($wheel_width + $wheel_radius/2) translateY(79px) translateZ(8px) rotateY(180deg);
+}
+.wheel-r-r {
+  transform: translateX($car_width - $wheel_width - $wheel_radius/2) translateY(79px) translateZ(8px);
+}
 
 
 @-webkit-keyframes spinZ {
