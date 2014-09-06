@@ -8,28 +8,32 @@
     <div id="game-canvas">
       <div id="game-scene" class="game-scene"></div>
     </div>
+    <div class="hud">
+      <button onclick="javascript:game.start()">START</button>
+      <button onclick="javascript:game.stop()">STOP</button>
+    </div>
   </div>
 
-  <button onclick="javascript:game.start()">START</button>
-  <button onclick="javascript:game.stop()">STOP</button>
 
   <template id="car-template">
-    <b class='body body-bottom'></b>
-    <b class='body body-right-top'></b>
-    <b class='body body-right'></b>
-    <b class='body body-left-top'></b>
-    <b class='body body-left'></b>
-    <b class='body body-front'></b>
-    <b class='body body-hood'></b>
-    <b class='body body-front-windshield'></b>
-    <b class='body body-top'></b>
-    <b class='body body-back-windshield'></b>
-    <b class='body body-back'></b>
+    <div class='car-transform'>
+      <b class='body body-bottom'></b>
+      <b class='body body-right-top'></b>
+      <b class='body body-right'></b>
+      <b class='body body-left-top'></b>
+      <b class='body body-left'></b>
+      <b class='body body-front'></b>
+      <b class='body body-hood'></b>
+      <b class='body body-front-windshield'></b>
+      <b class='body body-top'></b>
+      <b class='body body-back-windshield'></b>
+      <b class='body body-back'></b>
 
-    <b class='wheel wheel-f-l'></b>
-    <b class='wheel wheel-f-r'></b>
-    <b class='wheel wheel-r-l'></b>
-    <b class='wheel wheel-r-r'></b>
+      <b class='wheel wheel-f-l'></b>
+      <b class='wheel wheel-f-r'></b>
+      <b class='wheel wheel-r-l'></b>
+      <b class='wheel wheel-r-r'></b>
+    </div>
   </template>
   <template id="wheel-template">
     <b class='rim'></b>

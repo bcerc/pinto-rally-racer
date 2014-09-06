@@ -13,14 +13,16 @@ var game = (function(){
         wheel: document.querySelector('#wheel-template')
       },
       _startTime = null,
-      _player,
       _playerYOffset = 300,
+      _hasStarted = false,
+      _player,
       _playerShadow,
       _level,
-      _playerController;
+      _playerController,
+      _sceneResizeTimeout;
 
 
-  function initObjects () {
+  function init () {
     _player = new Car();
     _playerShadow = new Shadow(
       'car-shadow',
@@ -39,9 +41,25 @@ var game = (function(){
     _level.add(_playerShadow,'children');
     _scene.appendChild(_level.el);
 
+    updateScene();
+
+    window.onresize = onSceneResize;
+
     window.player = _player;
     window.playerShadow = _playerShadow;
     window.level = _level;
+  }
+
+  function onSceneResize () {
+    clearTimeout( _sceneResizeTimeout );
+    _sceneResizeTimeout = setTimeout(function () { updateScene(); }, 300);
+  }
+
+  function updateScene () {
+    console.log('updateScene')
+    var sceneXOffset = document.body.clientWidth * 0.5 - _level.width * 0.5,
+      sceneYOffset = 1000 - _level.height;
+    _scene.style.transform = 'rotateX(75deg) rotateZ(0deg) translateX(' + sceneXOffset + 'px) translateY(' + sceneYOffset + 'px) translateZ(-275px)';
   }
 
   function onStep () {
@@ -296,18 +314,20 @@ var game = (function(){
 
   return {
     start: function () {
-      log('game:start');
-      if (!this.hasStarted) {
+      log('game:start',_hasStarted);
+      if (!_hasStarted) {
         _startTime = time();
-        initObjects();
+        init();
+        this.step();
       }
-      this.step();
-      this.hasStarted = true;
+      _hasStarted = true;
+      _scene.classList.remove('game-paused');
     },
     stop: function () {
       log('game:stop');
       cancelAnimationFrame(this.requestId);
       _stopTime = time();
+      _scene.classList.add('game-paused');
     },
     step: function (timestamp) {
       var progress;

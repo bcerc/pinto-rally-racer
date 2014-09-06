@@ -1,14 +1,24 @@
 body {
   padding: 0;
   margin: 0;
-  background-color: #333;
+  background-color: #515c61;
   transform: translate3d(0, 0, 0);
   -webkit-backface-visibility: hidden;
   -webkit-transform-style: preserve-3d; }
 
+.hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 3%;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  text-align: right; }
+
 .game-container {
-  width: 1000px;
-  height: 733px;
+  width: 100%;
+  height: 100%;
   margin: 0px auto;
   border: solid 1px #999;
   overflow: hidden; }
@@ -46,11 +56,32 @@ body {
       left: 0;
       display: block; }
 
+.game-paused .car-transform {
+  -webkit-animation-play-state: paused; }
+
 .shadow {
   background-color: rgba(0, 0, 0, 0.2);
   -webkit-backface-visibility: hidden;
   -webkit-transform-style: preserve-3d; }
 
+.car-transform {
+  transform-style: preserve-3d;
+  width: 33px;
+  height: 33px;
+  transform-origin: 50% 0;
+  -webkit-animation-name: carRunning;
+  -webkit-animation-duration: .3s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-direction: alternate;
+  -webkit-animation-play-state: running; }
+
+@-webkit-keyframes carRunning {
+  0% {
+    transform: scale3d(1, 1, 0.95); }
+
+  100% {
+    transform: scale3d(1, 1, 1); } }
 .car {
   width: 33px;
   height: 33px;
