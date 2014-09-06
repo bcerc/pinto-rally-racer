@@ -1,7 +1,10 @@
 body {
   padding: 0;
   margin: 0;
-  background-color: #333; }
+  background-color: #333;
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d; }
 
 .game-container {
   width: 1000px;
@@ -17,7 +20,9 @@ body {
   width: 100%;
   height: 100%;
   perspective: 1200px;
-  perspective-origin: 50% 50%; }
+  perspective-origin: 50% 50%;
+  -webkit-backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d; }
 
 .game-scene {
   position: absolute;
@@ -26,13 +31,25 @@ body {
   width: 0;
   height: 0;
   transform-style: preserve-3d;
-  transform: rotateX(75deg) rotateZ(0deg) translateX(269px) translateY(-4907px) translateZ(-205px);
-  transform-origin: 50% 50%; }
+  transform: rotateX(75deg) rotateZ(0deg) translateX(140px) translateY(-2000px) translateZ(-275px);
+  transform-origin: 50% 50%;
+  -webkit-backface-visibility: hidden; }
   .game-scene * {
     position: absolute;
     top: 0;
     left: 0;
     display: block; }
+    .game-scene *::before, .game-scene *::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block; }
+
+.shadow {
+  background-color: rgba(0, 0, 0, 0.2);
+  -webkit-backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d; }
 
 .car {
   width: 33px;
@@ -40,7 +57,6 @@ body {
   transform-style: preserve-3d; }
   .car .body {
     transform-style: preserve-3d;
-    display: block;
     width: 100%;
     height: 100px; }
   .car .body-bottom {
@@ -69,6 +85,12 @@ body {
     transform: translateY(93.8px) translateZ(19px) rotateX(90deg);
     height: 11px;
     background-color: #9de094; }
+    .car .body-back::before {
+      top: auto;
+      bottom: 0;
+      width: 100%;
+      height: 40%;
+      background-color: #aaaaaa; }
   .car .body-back-windshield {
     transform-origin: 0 0;
     transform: translateY(74px) translateZ(39px) rotateX(-31deg);
@@ -99,6 +121,82 @@ body {
     transform: translateX(33px) translateZ(25px) rotateY(-100deg);
     background-position: right 0; }
 
+.rim::before, .rim::after {
+  border-radius: 200px;
+  background-color: #aaaaaa;
+  width: 10px;
+  height: 10px;
+  transform: rotateY(90deg) translateY(-5px) translateZ(-0.5px); }
+.rim::after {
+  transform: rotateY(90deg) translateY(-5px) translateZ(6.5px); }
+
+.wheel {
+  transform-style: preserve-3d; }
+  .wheel::before, .wheel::after {
+    border-radius: 200px;
+    background-color: #666666;
+    width: 16px;
+    height: 16px;
+    transform: rotateY(90deg) translateY(-8px) translateZ(0px); }
+  .wheel::after {
+    transform: rotateY(90deg) translateY(-8px) translateZ(2px); }
+  .wheel .f {
+    transform-style: preserve-3d; }
+    .wheel .f::before, .wheel .f::after {
+      transform-style: preserve-3d;
+      top: -3px;
+      background-color: #5e5e5e;
+      width: 6px;
+      height: 6px; }
+  .wheel .f1 {
+    transform: translateX(5px) rotateX(0deg); }
+    .wheel .f1::before {
+      transform: translateZ(8px); }
+    .wheel .f1::after {
+      transform: translateZ(-8px); }
+  .wheel .f2 {
+    transform: translateX(5px) rotateX(30deg); }
+    .wheel .f2::before {
+      transform: translateZ(8px); }
+    .wheel .f2::after {
+      transform: translateZ(-8px); }
+  .wheel .f3 {
+    transform: translateX(5px) rotateX(60deg); }
+    .wheel .f3::before {
+      transform: translateZ(8px); }
+    .wheel .f3::after {
+      transform: translateZ(-8px); }
+  .wheel .f4 {
+    transform: translateX(5px) rotateX(90deg); }
+    .wheel .f4::before {
+      transform: translateZ(8px); }
+    .wheel .f4::after {
+      transform: translateZ(-8px); }
+  .wheel .f5 {
+    transform: translateX(5px) rotateX(120deg); }
+    .wheel .f5::before {
+      transform: translateZ(8px); }
+    .wheel .f5::after {
+      transform: translateZ(-8px); }
+  .wheel .f6 {
+    transform: translateX(5px) rotateX(150deg); }
+    .wheel .f6::before {
+      transform: translateZ(8px); }
+    .wheel .f6::after {
+      transform: translateZ(-8px); }
+
+.wheel-f-l {
+  transform: translateX(10px) translateY(18px) translateZ(8px) rotateY(180deg); }
+
+.wheel-f-r {
+  transform: translateX(23px) translateY(18px) translateZ(8px); }
+
+.wheel-r-l {
+  transform: translateX(10px) translateY(79px) translateZ(8px) rotateY(180deg); }
+
+.wheel-r-r {
+  transform: translateX(23px) translateY(79px) translateZ(8px); }
+
 @-webkit-keyframes spinZ {
   0% {
     transform: translateX(200px) translateY(5700px) translateZ(10px) rotateZ(0deg); }
@@ -107,13 +205,15 @@ body {
     transform: translateX(200px) translateY(5700px) translateZ(10px) rotateZ(360deg); } }
 .level {
   width: 700px;
-  height: 6000px;
+  height: 3000px;
   transform-style: preserve-3d; }
 
 .road {
   width: 700px;
-  height: 6100px;
-  background: radial-gradient(circle, transparent 20%, slategray 20%, slategray 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, slategray 20%, slategray 80%, transparent 80%, transparent) 50px 50px, linear-gradient(#a8b1bb 8px, transparent 8px) 0 -4px, linear-gradient(90deg, #a8b1bb 8px, transparent 8px) -4px 0;
-  background-color: slategray;
-  background-size: 100px 100px, 100px 100px, 50px 50px, 50px 50px;
-  transform: translateY(0px); }
+  height: 3120px;
+  background: linear-gradient(#454f53 2px, transparent 2px) -2px, linear-gradient(90deg, #454f53 2px, transparent 2px)-2px 0;
+  background-color: #515c61;
+  background-size: 120px 120px, 120px 120px, 120px 120px, 120px 120px;
+  transform: translateY(0px);
+  -webkit-transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden; }

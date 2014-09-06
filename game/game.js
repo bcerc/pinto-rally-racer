@@ -1,4 +1,5 @@
 Element.prototype.on = Element.prototype.addEventListener;
+window.toInt = window.parseInt;
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.oRequestAnimationFrame;
 window.cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame || window.oCancelAnimationFrame;
 window.Matrix = window.WebKitCSSMatrix || window.MSCSSMatrix || window.CSSMatrix;
@@ -8,23 +9,38 @@ var game = (function(){
       _scene = document.querySelector('#game-scene'),
       _templates = {
         car: document.querySelector('#car-template'),
-        level: document.querySelector('#level-template')
+        level: document.querySelector('#level-template'),
+        wheel: document.querySelector('#wheel-template')
       },
       _startTime = null,
       _player,
+      _playerYOffset = 300,
+      _playerShadow,
       _level,
       _playerController;
 
 
   function initObjects () {
     _player = new Car();
+    _playerShadow = new Shadow(
+      'car-shadow',
+      _player,
+      {
+        padding: 3
+      });
+
     _level = new Level();
     _playerController = new PlayerController(_player);
 
+
+    _player.pos.y = _level.height - _playerYOffset;
+
     _level.add(_player,'children');
+    _level.add(_playerShadow,'children');
     _scene.appendChild(_level.el);
 
     window.player = _player;
+    window.playerShadow = _playerShadow;
     window.level = _level;
   }
 
@@ -35,10 +51,47 @@ var game = (function(){
       .update()
       .render();
 
+    _playerShadow
+      .update()
+      .render();
+
     _level
       .update()
       .render();
   }
+
+  function Shadow (shadowType,target, options) {
+    this.target = target;
+    this.options = options || this.defaults;
+
+    Positionable(this);
+    Rotatable(this);
+    Scalable(this);
+    Renderable(this);
+
+    this.el = document.createElement('div');
+    this.el.classList.add('shadow');
+    this.el.classList.add(shadowType);
+
+    this.el.style.width = toInt(this.target.el.style.width) + this.options.padding * 2 + 'px';
+    this.el.style.height = toInt(this.target.el.style.height) + this.options.padding * 2 + 'px';
+
+    this.pos.z = 2;
+
+    this.update = function () {
+      this.pos.x = this.target.pos.x - this.options.padding;
+      this.pos.y = this.target.pos.y - this.options.padding;
+      this.rotation.x = this.target.rotation.x;
+      // this.rotation.y = this.target.rotation.y;
+      this.rotation.z = this.target.rotation.z;
+
+      return this;
+    };
+    return this;
+  }
+  Shadow.prototype.defaults = {
+    padding: 0
+  };
 
   function Car () {
     Templatable(this, 'car');
@@ -63,13 +116,19 @@ var game = (function(){
       }
     };
 
+
+    this.wheels.fl.el.appendChild(_templates.wheel.content.cloneNode(true));
+    this.wheels.fr.el.appendChild(_templates.wheel.content.cloneNode(true));
+    this.wheels.rl.el.appendChild(_templates.wheel.content.cloneNode(true));
+    this.wheels.rr.el.appendChild(_templates.wheel.content.cloneNode(true));
+
     this.width = 33;
     this.height = 100;
     this.pos.x = 200;
     this.pos.y = 5700;
-    this.pos.z = 10;
+    this.pos.z = 2;
     this.speed = 18;
-    this.responsiveness = 1;
+    this.responsiveness = 2;
     this.straighteningRate = 0.98;
     this.maxRotation = 30;
 
@@ -85,7 +144,7 @@ var game = (function(){
         this.rotation.z = this.rotation.z < -this.maxRotation ? -this.maxRotation : this.rotation.z;
 
         //--- TURN LEVEL
-        _level.rotation.z = this.rotation.z * 0.02;
+        // _level.rotation.z = this.rotation.z * -0.02;  // TODO
 
         // derive vel from turning angle
         this.vel.x = -this.speed * this.rotation.z / 90;
@@ -94,10 +153,10 @@ var game = (function(){
 
 
         //--- LEAN
-        // this.rotation.y = this.vel.x * 4;
-        // leanOrigin = this.rotation.y >  1 ? '100% 50%' : leanOrigin;
-        // leanOrigin = this.rotation.y < -1 ? '0% 50%' : leanOrigin;
-        // this.el.style.transformOrigin = leanOrigin;
+        this.rotation.y = this.vel.x * 2;
+        leanOrigin = this.rotation.y >  1 ? '100% 50%' : leanOrigin;
+        leanOrigin = this.rotation.y < -1 ? '0% 50%' : leanOrigin;
+        this.el.style.transformOrigin = leanOrigin;
       }
       return this;
     };
@@ -186,6 +245,19 @@ var game = (function(){
 
 
   /*
+   *  WHEEL
+   */
+
+  function Wheel () {
+    Templatable(this, 'wheel');
+    Positionable(this);
+    Rotatable(this);
+    Renderable(this);
+
+    return this;
+  }
+
+  /*
    *  LEVEL
    */
 
@@ -197,9 +269,10 @@ var game = (function(){
     Renderable(this);
 
     this.width = 700;
-    this.height = 6000;
+    this.height = 3000;
     this.rotation.x = 0;
     this.pos.y = 0;
+    this.gridSize = 120;
 
     this.el.style.width = this.width + 'px';
     this.el.style.height = this.height + 'px';
@@ -210,11 +283,10 @@ var game = (function(){
     Positionable(this.road);
 
 
-
     this.update = function () {
       var levelSpeed = _player.speed - Math.abs(_player.vel.x);
       this.road.pos.y -= levelSpeed;
-      this.road.pos.y = this.road.pos.y < -100 ? this.road.pos.y%100 : this.road.pos.y;
+      this.road.pos.y = this.road.pos.y < -this.gridSize ? this.road.pos.y%this.gridSize : this.road.pos.y;
       this.road.el.style.transform = 'translateY(' + -this.road.pos.y + 'px) translateZ(0px)';
       return this;
     };
@@ -369,31 +441,16 @@ var game = (function(){
             z: o.rotation.z,
           };
 
-      // o.el.style.transform = 'matrix3d(' +
-      //                         s.x + ',0,0,0,' +
-      //                        '0,' + s.y + ',0,0,' +
-      //                        '0,0,' + s.z + ',0,' +
-      //                        p.x + ',' + p.y + ',' + p.z + ',1)';
-
-
-
-
-      o.el.style.transform = 'translateX(' + p.x + 'px) ' +
-                              'translateY(' + p.y + 'px) ' +
-                              'translateZ(' + p.z + 'px) ' +
-                              'scaleX(' + s.x + ') ' +
-                              'scaleY(' + s.y + ') ' +
-                              'scaleZ(' + s.z + ') ' +
+      // o.el.style.transform = new Matrix().rotate(r.x, 0, 0).rotate(0, r.y, 0).rotate(0, 0, r.z).scale(s.x, s.y, s.z).translate(p.x, p.y, p.z)
+      o.el.style.transform = 'translate3d(' + p.x + 'px, ' + p.y + 'px, ' + p.z + 'px) ' +
+                              'scale3d(' + s.x + ', ' + s.y + ', ' + s.z + ') ' +
                               'rotateX(' + r.x + 'deg) ' +
-                              'rotateY(' + r.y + 'deg) ' +
                               'rotateZ(' + r.z + 'deg) ' +
+                              'rotateY(' + r.y + 'deg) ' +
                               '';
-
-
       return o;
     };
   }
-
 
 
   /*
