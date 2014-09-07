@@ -1,15 +1,93 @@
+@font-face {
+  font-family: 'fontello';
+  src: url("icons.svg?78134293#fontello") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: 'fontello';
+    src: url("icons.svg?78134293#fontello") format("svg"); } }
+[class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "fontello";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+  display: inline-block;
+  text-decoration: inherit;
+  margin-right: .2em;
+  text-align: center;
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+  /* Uncomment for 3D effect */ }
+
+.icon-github:before {
+  content: '\e800'; }
+
+.icon-spinner:before {
+  content: '\e801'; }
+
+.icon-star:before {
+  content: '\e802'; }
+
+.icon-star-empty:before {
+  content: '\e803'; }
+
+.icon-play:before {
+  content: '\e804'; }
+
+.icon-twitter:before {
+  content: '\e805'; }
+
+.icon-pause:before {
+  content: '\e806'; }
+
+.icon-volume:before {
+  content: '\e80a'; }
+
+.icon-cancel:before {
+  content: '\e80c'; }
+
+.icon-ok:before {
+  content: '\e80d'; }
+
 body {
   padding: 0;
   margin: 0;
-  background-color: #515c61;
-  transform: translate3d(0, 0, 0);
-  -webkit-backface-visibility: hidden;
-  -webkit-transform-style: preserve-3d; }
+  background: linear-gradient(#555555 0%, #959595 100%);
+  overflow: hidden; }
+
+.btn {
+  border: 0;
+  background-color: #81aff5;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 20px;
+  padding: 10px;
+  border: solid 2px #FFFFFF;
+  color: #fff; }
+  .btn:hover {
+    background-color: #69a0f3; }
+  .btn:active {
+    background-color: #609af2; }
+  .btn:focus {
+    outline: 0;
+    box-shadow: 0 0 0 4px #B5D4D6; }
 
 .hud {
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 1;
   padding: 3%;
   width: 100%;
   height: 100%;
@@ -19,9 +97,7 @@ body {
 .game-container {
   width: 100%;
   height: 100%;
-  margin: 0px auto;
-  border: solid 1px #999;
-  overflow: hidden; }
+  margin: 0 auto; }
 
 #game-canvas {
   position: relative;
@@ -32,7 +108,7 @@ body {
   perspective: 1200px;
   perspective-origin: 50% 50%;
   -webkit-backface-visibility: hidden;
-  -webkit-transform-style: preserve-3d; }
+  transform-style: preserve-3d; }
 
 .game-scene {
   position: absolute;
@@ -41,7 +117,7 @@ body {
   width: 0;
   height: 0;
   transform-style: preserve-3d;
-  transform: rotateX(75deg) rotateZ(0deg) translateX(140px) translateY(-2000px) translateZ(-275px);
+  transform: rotateX(75deg) rotateZ(0deg) translateX(140px) translateY(-1400px) translateZ(-275px);
   transform-origin: 50% 50%;
   -webkit-backface-visibility: hidden; }
   .game-scene * {
@@ -49,12 +125,6 @@ body {
     top: 0;
     left: 0;
     display: block; }
-    .game-scene *::before, .game-scene *::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      display: block; }
 
 .game-paused .car-transform {
   -webkit-animation-play-state: paused; }
@@ -62,7 +132,7 @@ body {
 .shadow {
   background-color: rgba(0, 0, 0, 0.2);
   -webkit-backface-visibility: hidden;
-  -webkit-transform-style: preserve-3d; }
+  transform-style: preserve-3d; }
 
 .car-transform {
   transform-style: preserve-3d;
@@ -102,8 +172,7 @@ body {
   .car .body-front-windshield {
     transform-origin: 0 0;
     transform: translateY(34px) translateZ(25px) rotateX(45deg);
-    height: 20px;
-    background-image: url(pinto-front-windshield.svg); }
+    height: 20px; }
   .car .body-hood {
     transform: translateZ(23px) rotateX(6deg);
     height: 34px;
@@ -117,6 +186,10 @@ body {
     height: 11px;
     background-color: #9de094; }
     .car .body-back::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      display: block;
       top: auto;
       bottom: 0;
       width: 100%;
@@ -125,8 +198,7 @@ body {
   .car .body-back-windshield {
     transform-origin: 0 0;
     transform: translateY(74px) translateZ(39px) rotateX(-31deg);
-    height: 29px;
-    background-image: url(pinto-back-windshield.svg); }
+    height: 29px; }
   .car .body-left,
   .car .body-right,
   .car .body-left-top,
@@ -153,6 +225,11 @@ body {
     background-position: right 0; }
 
 .rim::before, .rim::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
   border-radius: 200px;
   background-color: #aaaaaa;
   width: 10px;
@@ -164,6 +241,11 @@ body {
 .wheel {
   transform-style: preserve-3d; }
   .wheel::before, .wheel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
     border-radius: 200px;
     background-color: #666666;
     width: 16px;
@@ -174,6 +256,11 @@ body {
   .wheel .f {
     transform-style: preserve-3d; }
     .wheel .f::before, .wheel .f::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
       transform-style: preserve-3d;
       top: -3px;
       background-color: #5e5e5e;
@@ -234,17 +321,74 @@ body {
 
   100% {
     transform: translateX(200px) translateY(5700px) translateZ(10px) rotateZ(360deg); } }
+.cone {
+  transform-style: preserve-3d;
+  width: 20px;
+  height: 20px;
+  background-color: #e4b130; }
+  .cone .cone-transform {
+    transform-style: preserve-3d;
+    width: 0;
+    height: 0;
+    transform-origin: 0% 0;
+    transform: rotateX(90deg) translate3d(4px, 0px, -10px); }
+  .cone .f {
+    transform-origin: 50% 50%;
+    transform-style: preserve-3d; }
+    .cone .f::before, .cone .f::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      transform-origin: 50% 100%;
+      transform-style: preserve-3d;
+      border-style: solid;
+      border-width: 30px 6px 0 6px;
+      width: 0;
+      height: 0; }
+    .cone .f::before {
+      border-color: #be8f19 transparent transparent;
+      transform: rotateX(11deg) rotateY(180deg) rotateZ(0deg) translateZ(0px); }
+    .cone .f::after {
+      border-color: #d9a41c transparent transparent;
+      transform: rotateX(-11deg) rotateY(0deg) rotateZ(0deg) translateZ(0px); }
+  .cone .f1 {
+    transform: rotateY(0deg) rotateY(0); }
+  .cone .f2 {
+    transform: rotateY(0deg) rotateY(90deg) translate3d(-6px, 0px, 6px); }
+
+.cone-red {
+  background-color: #dd5e5e; }
+  .cone-red .f::before, .cone-red .f::after {
+    border-color: #d22c2c transparent transparent; }
+
+.cone-blue {
+  background-color: #169ef8; }
+  .cone-blue .f::before, .cone-blue .f::after {
+    border-color: #067ccb transparent transparent; }
+
+.cone-gold {
+  background-color: #e4b130; }
+  .cone-gold .f::before, .cone-gold .f::after {
+    border-color: #be8f19 transparent transparent; }
+
+.cone-green {
+  background-color: #abc78d; }
+  .cone-green .f::before, .cone-green .f::after {
+    border-color: #8db364 transparent transparent; }
+
 .level {
-  width: 700px;
-  height: 3000px;
+  width: 800px;
+  height: 2400px;
   transform-style: preserve-3d; }
 
 .road {
-  width: 700px;
-  height: 3120px;
-  background: linear-gradient(#454f53 2px, transparent 2px) -2px, linear-gradient(90deg, #454f53 2px, transparent 2px)-2px 0;
-  background-color: #515c61;
-  background-size: 120px 120px, 120px 120px, 120px 120px, 120px 120px;
+  width: 800px;
+  height: 2562px;
+  background: linear-gradient(#a5cacd 2px, transparent 2px) -2px, linear-gradient(90deg, #a5cacd 2px, transparent 2px)-2px 0;
+  background-color: transparent;
+  background-size: 162px 162px, 162px 162px, 162px 162px, 162px 162px;
   transform: translateY(0px);
-  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
   -webkit-backface-visibility: hidden; }
