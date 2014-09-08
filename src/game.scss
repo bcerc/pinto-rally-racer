@@ -70,6 +70,7 @@ $default_camera_view:
   // rotateX(75deg) rotateZ(0deg) translateX(269px) translateY(-4907px) translateZ(-205px); // close up
 
 @import "icons";
+@import "animations";
 
 body {
   padding: 0;
@@ -592,4 +593,5 @@ h1 {
   padding: 40px;
   text-align: center;
   background: rgba(255,255,255,.5);
+  text-shadow: 1px 1px 0 rgba(0,0,0,.2);
 }

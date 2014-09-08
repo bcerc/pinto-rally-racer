@@ -1,4 +1,5 @@
 Element.prototype.on = Element.prototype.addEventListener;
+Element.prototype.off = Element.prototype.removeEventListener;
 window.$ = function (q) { return document.querySelector(q); };
 window.toInt = window.parseInt;
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.oRequestAnimationFrame;
@@ -16,6 +17,9 @@ var game = (function(){
         wheel: $('#wheel-template'),
         cone: $('#cone-template'),
         pintoSide: $('#pinto-side-template')
+      },
+      _views = {
+        title: $('.title-view')
       },
       _cameraPerspective = 500,
       _startTime = null,
@@ -44,6 +48,15 @@ var game = (function(){
 
 
     createCones();
+
+    _views.title.classList.add('bounceInDown');
+
+    delay(function () {
+      _views.title.classList.add('bounceOutUp');
+      // _views.title.classList.remove('bounceInDown');
+    },3000,this);
+
+    // $('#yourElement').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', doSomething);
 
 
     _level.add(_player,'children');
@@ -611,6 +624,9 @@ var game = (function(){
    *  UTILS
    */
 
+  function delay (callback, time, context) {
+    setTimeout((callback).bind(context),time);
+  }
   function Tween (obj) {
     this.obj = obj;
     this.to = function () {
