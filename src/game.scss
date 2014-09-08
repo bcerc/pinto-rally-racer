@@ -1,41 +1,118 @@
-$level_width: 700px;
-$level_height: 3000px;
+$level_width: 800px;
+$level_height: 2400px;
 
-$road_color: darken(#B9C1C5,40%);
+
+$bg_color: linear-gradient(180deg, #283048 0%, #859398 100%);
+$bg_color: linear-gradient(180deg, #EC6F66 0%, #F3A183 100%);
+$bg_color: linear-gradient(180deg, #C04848 0%, #480048 100%);
+$bg_color: linear-gradient(180deg, #182848 0%, #4b6cb7 100%);
+$bg_color: linear-gradient(180deg, #003973 0%, #E5E5BE 100%);
+
+
+// default
+$bg_color: linear-gradient(180deg, #757F9A 0%, #D7DDE8 100%);
+
+
+// Mystic
+// Colour 1: #757F9A
+// Colour 2: #D7DDE8
+
+// Purple Paradise
+// Colour 1: #1D2B64
+// Colour 2: #F8CDDA
+
+// Sea Weed
+// Colour 1: #4CB8C4
+// Colour 2: #3CD3AD
+
+// Mojito
+// Colour 1: #1D976C
+// Colour 2: #93F9B9
+
+// Mirage
+// Colour 1: #16222A
+// Colour 2: #3A6073
+
+// Steel Gray
+// Colour 1: #1F1C2C
+// Colour 2: #928DAB
+
+// Venice Blue
+// Colour 1: #085078
+// Colour 2: #85D8CE
+
+// Moss
+// Colour 1: #134E5E
+// Colour 2: #71B280
+
+// Midnight City
+// Colour 1: #232526
+// Colour 2: #414345
+
+// Influenza
+// Colour 1: #C04848
+// Colour 2: #480048
+
+// Horizon
+// Colour 1: #003973
+// Colour 2: #E5E5BE
+
+
+$road_color: transparent;
+$road_grid_color: rgba(255,255,255,.3);
 $road_grid_line_width: 2px;
-$road_grid_size: 120px;
+$road_grid_size: 162px;
+
+$btn_color: transparent;
 
 $default_camera_view:
   rotateX(75deg) rotateZ(0deg) translateX(140px) translateY(1000px - $level_height) translateZ(-275px);
   // rotateX(75deg) rotateZ(0deg) translateX(269px) translateY(-4907px) translateZ(-205px); // close up
 
+@import "icons";
+
 body {
   padding: 0;
   margin: 0;
-  background-color: $road_color;
-  transform: translate3d(0, 0, 0);
-  -webkit-backface-visibility: hidden;
-  -webkit-transform-style: preserve-3d;
+  background: $bg_color;
+  overflow: hidden;
+  font-family: "Futura", "Helvetica Nueue", sans-serif;
+  color: #fff;
 }
-.hud {
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: 3%;
-  width: 100%;
-  height: 100%;
+.btn {
+  border: 0;
+  background-color: $btn_color;
   box-sizing: border-box;
-  text-align: right;
+  font-size: 20px;
+  padding: 10px;
+  border: solid 1px #FFFFFF;
+  // text-shadow: 1px 0 0 rgba(0,0,0,.2);
+  // box-shadow: 1px 1px 0 1px rgba(0,0,0,.2);
+  color: #fff;
+  &:hover {
+    background-color: rgba(255,255,255,.1);
+  }
+  &:active {
+    background-color: rgba(255,255,255,.2);
+  }
+  &:focus {
+    outline: 0;
+    border: solid 1px #3CD3AD;
+    box-shadow: 0 0 0 2px #3CD3AD;
+  }
 }
 .game-container {
+  position: relative;
+  margin: 0 auto;
+  overflow: hidden;
   width: 100%;
   height: 100%;
-  margin: 0px auto;
-  border: solid 1px #999;
-  overflow: hidden;
+  max-width: 1200px;
+  max-height: 800px;
 }
 
 #game-canvas {
+  // -webkit-filter: blur(0px);
   position: relative;
   margin: 0;
   padding: 0;
@@ -45,11 +122,16 @@ body {
   perspective: 1200px;
   perspective-origin: 50% 50%;
   -webkit-backface-visibility: hidden;
-  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
 }
 
 
-
+.game-scene * {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+}
 .game-scene {
   position: absolute;
   top: 0;
@@ -66,14 +148,6 @@ body {
     top: 0;
     left: 0;
     display: block;
-    &::before,
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      display: block;
-    }
   }
 }
 .game-paused {
@@ -98,7 +172,7 @@ $car_chrome_color: #aaa;
 .shadow {
   background-color: rgba(0,0,0,.2);
   -webkit-backface-visibility: hidden;
-  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
 }
 .car-transform {
   transform-style: preserve-3d;
@@ -154,7 +228,7 @@ $car_chrome_color: #aaa;
     transform-origin: 0 0;
     transform: translateY(34px) translateZ(25px) rotateX(45deg);
     height: 20px;
-    background-image: url(pinto-front-windshield.svg);
+    // background-image: url(pinto-front-windshield.svg);
   }
   .body-hood {
     transform: translateZ(23px) rotateX(6deg);
@@ -173,6 +247,10 @@ $car_chrome_color: #aaa;
     background-color: darken($car_color,6%);
 
     &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      display: block;
       top: auto;
       bottom: 0;
       width: 100%;
@@ -184,7 +262,7 @@ $car_chrome_color: #aaa;
     transform-origin: 0 0;
     transform: translateY(74px) translateZ(39px) rotateX(-31deg);
     height: 29px;
-    background-image: url(pinto-back-windshield.svg);
+    // background-image: url(pinto-back-windshield.svg);
   }
   .body-left,
   .body-right,
@@ -222,6 +300,11 @@ $car_chrome_color: #aaa;
 .rim {
   &::before,
   &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
     border-radius: 200px;
     background-color: $rim_color;
     width: $rim_size;
@@ -237,6 +320,11 @@ $car_chrome_color: #aaa;
   transform-style: preserve-3d;
   &::before,
   &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
     border-radius: 200px;
     background-color: $wheel_color;
     width: $wheel_diameter;
@@ -250,6 +338,11 @@ $car_chrome_color: #aaa;
     transform-style: preserve-3d;
     &::before,
     &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
       transform-style: preserve-3d;
       top: -3px;
       background-color: darken($wheel_color,3%);
@@ -335,6 +428,116 @@ $car_chrome_color: #aaa;
   }
 }
 
+$cone_width: 20px;
+$cone_depth: 20px;
+$cone_height: 40px;
+$cone_color: #E4B130;
+$cone_color_red: desaturate(#E7626C, 0%);
+$cone_color_blue: desaturate(#169EF8, 0%);
+$cone_color_gold: desaturate(#E4B130, 0%);
+$cone_color_green: #ABC78D;
+
+.cone {
+  transform-style: preserve-3d;
+  width: $cone_width;
+  height: $cone_depth;
+  background-color: $cone_color;
+
+  // -webkit-animation-name: spinZ;
+  // -webkit-animation-duration: 16s;
+  // -webkit-animation-iteration-count: infinite;
+  // -webkit-animation-timing-function: linear;
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 20px $cone_width * .5 0 ;
+    border-color: rgba(0,0,0,.2) transparent transparent;
+  }
+
+  .cone-transform {
+    transform-style: preserve-3d;
+    width: 0;
+    height: 0;
+    transform-origin: 0% 0;
+    transform: rotateX(90deg) translate3d(4px,0px,-10px);
+  }
+  .f {
+    transform-origin: 50% 50%;
+    transform-style: preserve-3d;
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      transform-origin: 50% 100%;
+      transform-style: preserve-3d;
+      border-style: solid;
+      border-width: 30px 6px 0 6px;
+      width: 0;
+      height: 0;
+      // -webkit-backface-visibility: hidden;
+    }
+    &::before {
+      border-color: darken($cone_color,12%) transparent transparent;
+      transform: rotateX(11deg) rotateY(180deg) rotateZ(0deg) translateZ(0px);
+    }
+    &::after {
+      border-color: darken($cone_color,6%) transparent transparent;
+      // border-color: darken($cone_color,25%) transparent transparent;
+      transform: rotateX(-11deg) rotateY(-0deg) rotateZ(0deg) translateZ(0px);
+    }
+  }
+  .f1 {
+    transform: rotateY(0deg) rotateY(0);
+  }
+  .f2 {
+    transform: rotateY(0deg) rotateY(90deg) translate3d(-6px,0px,6px);
+  }
+}
+.cone-red {
+  background-color: $cone_color_red;
+  .f {
+    &::before,
+    &::after {
+      border-color: darken($cone_color_red,12%) transparent transparent;
+    }
+  }
+}
+.cone-blue {
+  background-color: $cone_color_blue;
+  .f {
+    &::before,
+    &::after {
+      border-color: darken($cone_color_blue,12%) transparent transparent;
+    }
+  }
+}
+.cone-gold {
+  background-color: $cone_color_gold;
+  .f {
+    &::before,
+    &::after {
+      border-color: darken($cone_color_gold,12%) transparent transparent;
+    }
+  }
+}
+.cone-green {
+  background-color: $cone_color_green;
+  .f {
+    &::before,
+    &::after {
+      border-color: darken($cone_color_green,12%) transparent transparent;
+    }
+  }
+}
 
 .level {
   width: $level_width;
@@ -347,12 +550,46 @@ $car_chrome_color: #aaa;
   height: $level_height+$road_grid_size;
 
   background:
-    linear-gradient(darken($road_color,5%) $road_grid_line_width, transparent $road_grid_line_width) 0 -$road_grid_line_width,
-    linear-gradient(90deg, darken($road_color,5%) $road_grid_line_width, transparent $road_grid_line_width) -$road_grid_line_width 0;
+    linear-gradient(darken($road_grid_color,5%) $road_grid_line_width, transparent $road_grid_line_width) 0 -$road_grid_line_width,
+    linear-gradient(90deg, darken($road_grid_color,5%) $road_grid_line_width, transparent $road_grid_line_width) -$road_grid_line_width 0;
   background-color: $road_color;
   background-size: $road_grid_size $road_grid_size, $road_grid_size $road_grid_size, $road_grid_size $road_grid_size, $road_grid_size $road_grid_size;
 
   transform: translateY(0px);
-  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
   -webkit-backface-visibility: hidden;
+}
+
+
+
+
+// MENUS / HUD
+.hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  padding: 3%;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  text-align: right;
+}
+.views {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+.title-view {
+  white-space: nowrap;
+}
+h1 {
+  font-weight: 600;
+  text-transform: uppercase;
+  border: solid 1px #fff;
+  display: inline-block;
+  padding: 40px;
+  text-align: center;
+  background: rgba(255,255,255,.5);
 }

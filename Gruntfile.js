@@ -23,10 +23,7 @@ module.exports = function(grunt) {
     },
     copy: {
       game: {
-        files: [{ cwd: 'src/', flatten: true, expand: true, src: ['index.html','game.css','game.js', '*.svg'], dest: 'game/', filter: 'isFile'}]
-      },
-      gameMin: {
-        files: [{ cwd: 'src/', flatten: true, expand: true, src: ['index.html','game.css','game.js', '*.svg'], dest: 'game-min/', filter: 'isFile'}]
+        files: [{ cwd: 'src/', flatten: true, expand: true, src: ['index.html','game.css','game.js', 'pinto.svg', 'icons.svg'], dest: 'game/', filter: 'isFile'}]
       }
     },
     uglify: {
@@ -44,6 +41,19 @@ module.exports = function(grunt) {
       gameMin: {
         files: {
           'game-min/game.css': ['src/game.css']
+        }
+      }
+    },
+    htmlmin: {
+      gameMin: {
+        options: {
+          removeComments: true,
+          collapseWhitespace: true
+        },
+        files: {
+          'game-min/index.html': 'src/index.html',
+          'game-min/pinto.svg': 'src/pinto.svg',
+          'game-min/icons.svg': 'src/icons.svg'
         }
       }
     },
@@ -109,6 +119,7 @@ module.exports = function(grunt) {
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-htmlmin');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-copy');
@@ -118,7 +129,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-open');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'uglify', 'cssmin', 'copy', 'compress']);
+  grunt.registerTask('default', ['jshint', 'uglify', 'cssmin', 'htmlmin', 'copy', 'compress']);
 
 
 
