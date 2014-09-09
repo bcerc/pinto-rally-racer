@@ -64,6 +64,7 @@ $road_grid_line_width: 2px;
 $road_grid_size: 162px;
 
 $btn_color: transparent;
+$primary_color: #3CD3AD;
 
 $default_camera_view:
   rotateX(75deg) rotateZ(0deg) translateX(140px) translateY(1000px - $level_height) translateZ(-275px);
@@ -98,8 +99,8 @@ body {
   }
   &:focus {
     outline: 0;
-    border: solid 1px #3CD3AD;
-    box-shadow: 0 0 0 2px #3CD3AD;
+    border: solid 1px $primary_color;
+    box-shadow: 0 0 0 2px $primary_color;
   }
 }
 .game-container {
@@ -438,16 +439,21 @@ $cone_color_blue: desaturate(#169EF8, 0%);
 $cone_color_gold: desaturate(#E4B130, 0%);
 $cone_color_green: #ABC78D;
 
+.cone-animate {
+  transform-style: preserve-3d;
+  -webkit-animation-duration: .7s;
+  -webkit-animation-fill-mode: forwards;
+}
+.cone-base {
+  width: $cone_width;
+  height: $cone_depth;
+  background-color: $cone_color;
+}
 .cone {
   transform-style: preserve-3d;
   width: $cone_width;
   height: $cone_depth;
-  background-color: $cone_color;
 
-  // -webkit-animation-name: spinZ;
-  // -webkit-animation-duration: 16s;
-  // -webkit-animation-iteration-count: infinite;
-  // -webkit-animation-timing-function: linear;
   &::after {
     content: '';
     position: absolute;
@@ -459,6 +465,7 @@ $cone_color_green: #ABC78D;
     border-style: solid;
     border-width: 20px $cone_width * .5 0 ;
     border-color: rgba(0,0,0,.2) transparent transparent;
+    transition: .2s;
   }
 
   .cone-transform {
@@ -504,7 +511,9 @@ $cone_color_green: #ABC78D;
   }
 }
 .cone-red {
-  background-color: $cone_color_red;
+  .cone-base {
+    background-color: $cone_color_red;
+  }
   .f {
     &::before,
     &::after {
@@ -513,7 +522,9 @@ $cone_color_green: #ABC78D;
   }
 }
 .cone-blue {
-  background-color: $cone_color_blue;
+  .cone-base {
+    background-color: $cone_color_blue;
+  }
   .f {
     &::before,
     &::after {
@@ -522,7 +533,9 @@ $cone_color_green: #ABC78D;
   }
 }
 .cone-gold {
-  background-color: $cone_color_gold;
+  .cone-base {
+    background-color: $cone_color_gold;
+  }
   .f {
     &::before,
     &::after {
@@ -531,7 +544,9 @@ $cone_color_green: #ABC78D;
   }
 }
 .cone-green {
-  background-color: $cone_color_green;
+  .cone-base {
+    background-color: $cone_color_green;
+  }
   .f {
     &::before,
     &::after {
@@ -593,5 +608,12 @@ h1 {
   padding: 40px;
   text-align: center;
   background: rgba(255,255,255,.5);
-  text-shadow: 1px 1px 0 rgba(0,0,0,.2);
+  // color: $primary_color;
+  // text-shadow: 1px 1px 0 rgba(0,0,0,.2);
+  // border: solid 4px $primary_color;
+  // text-shadow:
+  //    -1px -1px 0 #fff,
+  //     1px -1px 0 #fff,
+  //     -1px 1px 0 #fff,
+  //      1px 1px 0 #fff;
 }
