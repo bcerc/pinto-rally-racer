@@ -10,6 +10,15 @@
     </div>
     <div class="hud">
       <button onclick="javascript:game.togglePlay()" class='btn icon-pause'></button>
+
+      <div class='views'>
+        <div class='title-view animated'>
+          <h1>
+            Super Pinto Rally Racer
+          </h1>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -67,10 +76,12 @@
   </template>
 
   <template id="cone-template">
-    <b class='base'></b>
-    <div class='cone-transform'>
-      <b class='f f1'></b>
-      <b class='f f2'></b>
+    <div class='cone-animate'>
+      <b class='cone-base'></b>
+      <div class='cone-transform'>
+        <b class='f f1'></b>
+        <b class='f f2'></b>
+      </div>
     </div>
   </template>
 
