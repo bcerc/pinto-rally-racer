@@ -131,22 +131,44 @@
   border-width: 20px 5px 0; }
 .cone.cone-fall .cone-animate {
   -webkit-animation-name: coneFall; }
+.cone.cone-fall .cone-animate.fall2 {
+  -webkit-animation-name: coneFall2; }
+.cone.cone-fall .cone-animate.fall3 {
+  -webkit-animation-name: coneFall3; }
 
 @-webkit-keyframes coneFall {
   0% {
-    transition-timing-function: linear; }
-
-  50% {
-    transition-timing-function: cubic-bezier(0.5, 1.5, 0.58, 0.78); }
-
-  0% {
+    transition-timing-function: linear;
     transform: rotateX(0deg); }
 
   50% {
+    transition-timing-function: cubic-bezier(0.5, 1.5, 0.58, 0.78);
     transform: rotateX(90deg) rotateY(120deg) translateZ(0) translateY(80px); }
 
   100% {
     transform: rotateX(90deg) rotateY(150deg) translateX(0px) translateZ(0) translateY(0px); } }
+@-webkit-keyframes coneFall2 {
+  0% {
+    transition-timing-function: linear;
+    transform: rotateX(0deg); }
+
+  50% {
+    transition-timing-function: cubic-bezier(0.5, 1.5, 0.58, 0.78);
+    transform: rotateX(90deg) rotateY(-100deg) translateZ(0) translateY(90px); }
+
+  100% {
+    transform: rotateX(90deg) rotateY(-120deg) translateX(0px) translateZ(0) translateY(0px); } }
+@-webkit-keyframes coneFall3 {
+  0% {
+    transition-timing-function: linear;
+    transform: rotateX(0deg); }
+
+  50% {
+    transition-timing-function: cubic-bezier(0.5, 1.5, 0.58, 0.78);
+    transform: rotateX(90deg) rotateY(-50deg) translateZ(0) translateY(60px); }
+
+  100% {
+    transform: rotateX(90deg) rotateY(-80deg) translateX(0px) translateZ(0) translateY(0px); } }
 body {
   padding: 0;
   margin: 0;
@@ -214,7 +236,8 @@ body {
     left: 0;
     display: block; }
 
-.game-paused .car-transform {
+.game-paused .car-animate,
+.game-paused .cone-animate {
   -webkit-animation-play-state: paused; }
 
 .shadow {
@@ -222,7 +245,7 @@ body {
   -webkit-backface-visibility: hidden;
   transform-style: preserve-3d; }
 
-.car-transform {
+.car-animate {
   transform-style: preserve-3d;
   width: 33px;
   height: 33px;

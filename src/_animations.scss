@@ -91,22 +91,52 @@
   .cone-animate {
     -webkit-animation-name: coneFall;
   }
+  .cone-animate.fall2 {
+    -webkit-animation-name: coneFall2;
+  }
+  .cone-animate.fall3 {
+    -webkit-animation-name: coneFall3;
+  }
 }
 
 @-webkit-keyframes coneFall {
   0% {
     transition-timing-function: linear;
-  }
-  50% {
-    transition-timing-function: cubic-bezier(.5,1.5,.58,.78);
-  }
-  0% {
     transform: rotateX(0deg);
   }
   50% {
+    transition-timing-function: cubic-bezier(.5,1.5,.58,.78);
     transform: rotateX(90deg) rotateY(120deg) translateZ(0) translateY(80px);
   }
   100% {
     transform: rotateX(90deg) rotateY(150deg) translateX(0px) translateZ(0) translateY(0px);
+  }
+}
+
+@-webkit-keyframes coneFall2 {
+  0% {
+    transition-timing-function: linear;
+    transform: rotateX(0deg);
+  }
+  50% {
+    transition-timing-function: cubic-bezier(.5,1.5,.58,.78);
+    transform: rotateX(90deg) rotateY(-100deg) translateZ(0) translateY(90px);
+  }
+  100% {
+    transform: rotateX(90deg) rotateY(-120deg) translateX(0px) translateZ(0) translateY(0px);
+  }
+}
+
+@-webkit-keyframes coneFall3 {
+  0% {
+    transition-timing-function: linear;
+    transform: rotateX(0deg);
+  }
+  50% {
+    transition-timing-function: cubic-bezier(.5,1.5,.58,.78);
+    transform: rotateX(90deg) rotateY(-50deg) translateZ(0) translateY(60px);
+  }
+  100% {
+    transform: rotateX(90deg) rotateY(-80deg) translateX(0px) translateZ(0) translateY(0px);
   }
 }

@@ -1,11 +1,14 @@
 Element.prototype.on = Element.prototype.addEventListener;
 Element.prototype.off = Element.prototype.removeEventListener;
+EventTarget.prototype.trigger = EventTarget.prototype.dispatchEvent;
 window.$ = function (q) { return document.querySelector(q); };
 window.toInt = window.parseInt;
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.oRequestAnimationFrame;
 window.cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame || window.oCancelAnimationFrame;
 window.Matrix = window.WebKitCSSMatrix || window.MSCSSMatrix || window.CSSMatrix;
 window.PI = Math.PI;
+window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+window.body = document.body;
 
 var game = (function(){
   var _container = $('.game-container'),
@@ -26,15 +29,21 @@ var game = (function(){
       _playerYOffset = 0.45,
       _hasInit = false,
       _isPaused = true,
-      _numOfCones = 12,
+      _totalConesHit = 0,
       _player,
       _playerShadow,
       _level,
       _playerController,
-      _sceneResizeTimeout,
-      _cones;
+      _sceneResizeTimeout;
 
-  console.log('_container',_container);
+  var _levels = [
+      {
+        numOfCones: 12,
+        topColor: '#1D2B64',
+        botColor: '#F8CDDA'
+      }
+    ];
+
   function init () {
     _hasInit = true;
     _player = new Car();
@@ -43,11 +52,10 @@ var game = (function(){
       _player,
       { padding: 3 });
 
-    _level = new Level();
+    _level = new Level(_levels[0]);
+
+
     _playerController = new PlayerController(_player);
-
-
-    createCones();
 
     _views.title.classList.add('bounceInDown');
 
@@ -65,26 +73,17 @@ var game = (function(){
 
     updateScene();
 
-    window.onresize = onSceneResize;
+    body.on('hit-cone', function () {
+      _totalConesHit++;
+      Sound('cone_hit',_totalConesHit);
+    });
 
+    window.onresize = onSceneResize;
     window.player = _player;
     window.playerShadow = _playerShadow;
     window.level = _level;
   }
 
-  function createCones () {
-    var cone;
-    _cones = [];
-
-    while (_cones.length < _numOfCones - 1) {
-      cone = new Cone();
-      cone.setRandomColor();
-      cone.pos.x = rand(50, _level.width - 50);
-      cone.pos.y = rand(50, _level.height - 50);
-      _level.add(cone,'children');
-      _cones.push(cone);
-    }
-  }
 
   function onSceneResize () {
     clearTimeout( _sceneResizeTimeout );
@@ -116,7 +115,7 @@ var game = (function(){
       .update()
       .render();
 
-    _cones.forEach(function (cone, index) {
+    _level.cones.forEach(function (cone, index) {
       cone
         .update()
         .render();
@@ -141,6 +140,7 @@ var game = (function(){
     this.pos.z = 1;
     this.colors = ['red','blue','gold','green'];
     this.coneAnimate = this.el.querySelector('.cone-animate');
+    this.coneAnimate.classList.add('fall'+(Math.ceil(rand(0,3))));
 
     this.setRandomColor = function () {
       var color = this.colors[Math.floor(rand(0,4))];
@@ -149,8 +149,6 @@ var game = (function(){
     };
 
     this.update = function () {
-      // this.rotation.z += 1;
-      // this.rotation.x = 90;
       var isHitX = this.pos.x > _player.pos.x - 5 && this.pos.x < _player.pos.x + 45,
           isHitY = this.pos.y + 30 < _player.pos.y && this.pos.y + 60 > _player.pos.y,
           isHit = isHitX && isHitY;
@@ -158,6 +156,7 @@ var game = (function(){
       if (isHit) {
         if (!this.el.classList.contains('cone-fall')) {
           this.rotation.z = rand(0,40);
+          body.trigger(new CustomEvent('hit-cone'));
         }
 
         this.el.classList.add('cone-fall');
@@ -259,24 +258,11 @@ var game = (function(){
         this.rotation.z = rz;
 
 
-        //--- TURN LEVEL
-        _level.pos.x = (-_player.pos.x + _level.width * 0.5) * 0.4;
-        // _level.rotation.z = this.rotation.z * -0.02;  // TODO
-
         // derive vel from turning angle
         this.vel.x = -this.speed * this.rotation.z / 90;
         // increment pos
         this.pos.x -= this.vel.x;
       }
-      return this;
-    };
-
-    this.turnWheels = function (angle) {
-      var rad = (angle / this.maxTurnAngle * PI) - PI*0.5;
-      var tireRotation = Math.cos(rad) * this.maxTurnAngle;
-
-      this.wheels.fl.el.style.transform = 'rotateY(90deg) translateX(-16px) rotateX(' + tireRotation + 'deg)';
-      this.wheels.fr.el.style.transform = 'rotateY(90deg) translateX(-16px) rotateX(' + tireRotation + 'deg)';
       return this;
     };
 
@@ -391,7 +377,7 @@ var game = (function(){
    *  LEVEL
    */
 
-  function Level () {
+  function Level (options) {
     Templatable(this, 'level');
     Collectable(this,'children');
     Positionable(this);
@@ -403,6 +389,12 @@ var game = (function(){
     this.rotation.x = 0;
     this.pos.y = 0;
     this.gridSize = 160;
+    this.cones = [];
+    this.numOfCones = options.numOfCones || 10;
+    this.topColor = options.topColor || '#757F9A';
+    this.botColor = options.botColor || '#D7DDE8';
+
+    document.body.style.background = 'linear-gradient(180deg, ' + this.topColor + ' 0%, ' + this.botColor + ' 100%)';
 
     this.el.style.width = this.width + 'px';
     this.el.style.height = this.height + 'px';
@@ -412,6 +404,27 @@ var game = (function(){
     };
     Positionable(this.road);
 
+    this.createCones = function () {
+      var cone;
+
+      while (this.cones.length < this.numOfCones - 1) {
+        cone = new Cone();
+        cone.setRandomColor();
+        cone.pos.x = rand(50, this.width - 50);
+        cone.pos.y = rand(50, this.height - 50);
+        this.add(cone,'children');
+        this.cones.push(cone);
+      }
+      return this;
+    };
+    this.destroyCones = function () {
+      this.cones.forEach( function (cone, index, cones) {
+        cone.el.remove();
+      });
+      while(this.cones.length > 0) {
+        this.cones.pop();
+      }
+    };
 
     this.update = function () {
       var levelSpeed = _player.speed - Math.abs(_player.vel.x);
@@ -419,14 +432,17 @@ var game = (function(){
       this.road.pos.y = this.road.pos.y < -this.gridSize ? this.road.pos.y%this.gridSize : this.road.pos.y;
       this.road.el.style.transform = 'translateY(' + -this.road.pos.y + 'px) translateZ(0px)';
 
+        //--- TURN LEVEL
+      this.pos.x = (-_player.pos.x + this.width * 0.5) * 0.4;
 
-      _cones.forEach(function (cone, index) {
+      this.cones.forEach(function (cone, index) {
         cone.pos.y += levelSpeed;
 
         // reset cone position
         if (cone.pos.y > _level.height) {
           cone.pos.y = 50;
           cone.pos.x = rand(0,_level.width-50);
+          cone.rotation.z = 0;
           cone.setRandomColor();
         }
       });
@@ -434,6 +450,8 @@ var game = (function(){
 
       return this;
     };
+
+    this.createCones();
 
     return this;
   }
@@ -608,6 +626,37 @@ var game = (function(){
   /*
    *  UTILS
    */
+
+  function Sound(type, amt) {
+    var C = 261.626,
+        E = 329.628,
+        A = 220,
+        D = 293.665,
+        F = 349.228,
+        G = 195.998,
+        B = 246.942,
+        song = [C,C,E,E,A,A,C,C,D,D,F,F,G,G,B,B],
+        songLen = song.length,
+        osc = audioCtx.createOscillator();
+
+    play();
+
+
+    function play () {
+      var offset = 0,
+          audionode = audioCtx.createScriptProcessor(256, 0, 2);
+
+      osc.frequency.value = song[amt%songLen];
+      osc.connect(audioCtx.destination);
+      osc.start(0);
+
+      setTimeout(function () {
+        osc.stop(0);
+      },400);
+    }
+  }
+
+
 
   function delay (callback, time, context) {
     setTimeout((callback).bind(context),time);

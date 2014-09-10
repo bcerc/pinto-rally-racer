@@ -131,22 +131,44 @@
   border-width: 20px 5px 0; }
 .cone.cone-fall .cone-animate {
   -webkit-animation-name: coneFall; }
+.cone.cone-fall .cone-animate.fall2 {
+  -webkit-animation-name: coneFall2; }
+.cone.cone-fall .cone-animate.fall3 {
+  -webkit-animation-name: coneFall3; }
 
 @-webkit-keyframes coneFall {
   0% {
-    transition-timing-function: linear; }
-
-  50% {
-    transition-timing-function: cubic-bezier(0.5, 1.5, 0.58, 0.78); }
-
-  0% {
+    transition-timing-function: linear;
     transform: rotateX(0deg); }
 
   50% {
+    transition-timing-function: cubic-bezier(0.5, 1.5, 0.58, 0.78);
     transform: rotateX(90deg) rotateY(120deg) translateZ(0) translateY(80px); }
 
   100% {
     transform: rotateX(90deg) rotateY(150deg) translateX(0px) translateZ(0) translateY(0px); } }
+@-webkit-keyframes coneFall2 {
+  0% {
+    transition-timing-function: linear;
+    transform: rotateX(0deg); }
+
+  50% {
+    transition-timing-function: cubic-bezier(0.5, 1.5, 0.58, 0.78);
+    transform: rotateX(90deg) rotateY(-100deg) translateZ(0) translateY(90px); }
+
+  100% {
+    transform: rotateX(90deg) rotateY(-120deg) translateX(0px) translateZ(0) translateY(0px); } }
+@-webkit-keyframes coneFall3 {
+  0% {
+    transition-timing-function: linear;
+    transform: rotateX(0deg); }
+
+  50% {
+    transition-timing-function: cubic-bezier(0.5, 1.5, 0.58, 0.78);
+    transform: rotateX(90deg) rotateY(-50deg) translateZ(0) translateY(60px); }
+
+  100% {
+    transform: rotateX(90deg) rotateY(-80deg) translateX(0px) translateZ(0) translateY(0px); } }
 body {
   padding: 0;
   margin: 0;
@@ -192,29 +214,30 @@ body {
   -webkit-backface-visibility: hidden;
   transform-style: preserve-3d; }
 
-.game-scene * {
+.game-camera * {
   position: absolute;
   top: 0;
   left: 0;
   display: block; }
 
-.game-scene {
+.game-camera {
   position: absolute;
   top: 0;
   left: 0;
   width: 0;
   height: 0;
   transform-style: preserve-3d;
-  transform: rotateX(75deg) rotateZ(0deg) translateX(140px) translateY(-1400px) translateZ(-275px);
+  transform: rotateX(75deg) rotateZ(0deg) translateX(140px) translateY(0) translateZ(-275px);
   transform-origin: 50% 50%;
   -webkit-backface-visibility: hidden; }
-  .game-scene * {
+  .game-camera * {
     position: absolute;
     top: 0;
     left: 0;
     display: block; }
 
-.game-paused .car-transform {
+.game-paused .car-animate,
+.game-paused .cone-animate {
   -webkit-animation-play-state: paused; }
 
 .shadow {
@@ -222,7 +245,7 @@ body {
   -webkit-backface-visibility: hidden;
   transform-style: preserve-3d; }
 
-.car-transform {
+.car-animate {
   transform-style: preserve-3d;
   width: 33px;
   height: 33px;

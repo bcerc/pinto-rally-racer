@@ -1,16 +1,19 @@
 Element.prototype.on = Element.prototype.addEventListener;
 Element.prototype.off = Element.prototype.removeEventListener;
+EventTarget.prototype.trigger = EventTarget.prototype.dispatchEvent;
 window.$ = function (q) { return document.querySelector(q); };
 window.toInt = window.parseInt;
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.oRequestAnimationFrame;
 window.cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame || window.oCancelAnimationFrame;
 window.Matrix = window.WebKitCSSMatrix || window.MSCSSMatrix || window.CSSMatrix;
 window.PI = Math.PI;
+window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+window.body = document.body;
 
 var game = (function(){
   var _container = $('.game-container'),
       _canvas = $('#game-canvas'),
-      _scene = $('#game-scene'),
+      _camera = new Camera($('#game-camera')),
       _templates = {
         car: $('#car-template'),
         level: $('#level-template'),
@@ -26,15 +29,73 @@ var game = (function(){
       _playerYOffset = 0.45,
       _hasInit = false,
       _isPaused = true,
-      _numOfCones = 12,
+      _totalConesHit = 0,
       _player,
       _playerShadow,
       _level,
       _playerController,
-      _sceneResizeTimeout,
-      _cones;
+      _cameraResizeTimeout;
 
-  console.log('_container',_container);
+
+  var _levels = [
+      {
+        name: '',
+        numOfCones: 0,
+        topColor: '#757F9A',
+        botColor: '#D7DDE8'
+      },{
+        name: 'Purple Paradise',
+        numOfCones: 5,
+        topColor: '#1D2B64',
+        botColor: '#F8CDDA'
+      },{
+        name: 'Sea Weed',
+        numOfCones: 10,
+        topColor: '#4CB8C4',
+        botColor: '#3CD3AD'
+      },{
+        name: 'Mojito',
+        numOfCones: 15,
+        topColor: '#1D976C',
+        botColor: '#93F9B9'
+      },{
+        name: 'Mirage',
+        numOfCones: 20,
+        topColor: '#16222A',
+        botColor: '#3A6073'
+      },{
+        name: 'Steel Gray',
+        numOfCones: 20,
+        topColor: '#1F1C2C',
+        botColor: '#928DAB'
+      },{
+        name: 'Venice Blue',
+        numOfCones: 20,
+        topColor: '#085078',
+        botColor: '#85D8CE'
+      },{
+        name: 'Moss',
+        numOfCones: 20,
+        topColor: '#134E5E',
+        botColor: '#71B280'
+      },{
+        name: 'Midnight City',
+        numOfCones: 20,
+        topColor: '#232526',
+        botColor: '#414345'
+      },{
+        name: 'Influenza',
+        numOfCones: 20,
+        topColor: '#C04848',
+        botColor: '#480048'
+      },{
+        name: 'Horizon',
+        numOfCones: 20,
+        topColor: '#003973',
+        botColor: '#E5E5BE'
+      },
+    ];
+
   function init () {
     _hasInit = true;
     _player = new Car();
@@ -43,11 +104,10 @@ var game = (function(){
       _player,
       { padding: 3 });
 
-    _level = new Level();
+    _level = new Level( _levels[randInt(0,_levels.length)] );
+
+
     _playerController = new PlayerController(_player);
-
-
-    createCones();
 
     _views.title.classList.add('bounceInDown');
 
@@ -61,43 +121,47 @@ var game = (function(){
 
     _level.add(_player,'children');
     _level.add(_playerShadow,'children');
-    _scene.appendChild(_level.el);
+    _camera.el.appendChild(_level.el);
 
     updateScene();
 
-    window.onresize = onSceneResize;
+    body.on('hit-cone', function () {
+      _totalConesHit++;
+      Sound('cone_hit',_totalConesHit);
+    });
 
+    window.onresize = onSceneResize;
     window.player = _player;
     window.playerShadow = _playerShadow;
     window.level = _level;
   }
 
-  function createCones () {
-    var cone;
-    _cones = [];
-
-    while (_cones.length < _numOfCones - 1) {
-      cone = new Cone();
-      cone.setRandomColor();
-      cone.pos.x = rand(50, _level.width - 50);
-      cone.pos.y = rand(50, _level.height - 50);
-      _level.add(cone,'children');
-      _cones.push(cone);
-    }
+  function setLevel(num) {
+    _level.setOptions(_levels[num]);
   }
 
   function onSceneResize () {
-    clearTimeout( _sceneResizeTimeout );
-    _sceneResizeTimeout = setTimeout(function () { updateScene(); }, 300);
+    clearTimeout( _cameraResizeTimeout );
+    _cameraResizeTimeout = setTimeout(function () { updateScene(); }, 300);
   }
 
   function updateScene () {
-    var sceneXOffset = _container.clientWidth * 0.5 - _level.width * 0.5,
-      sceneYOffset = (_container.clientHeight * 1.3) - _level.height,
-      sceneZOffset = -_container.clientHeight * 0.36;
-
     _player.pos.y = _level.height - (_playerYOffset * _container.clientHeight);
-    _scene.style.transform = 'rotateX(75deg) rotateZ(0deg) translateX(' + sceneXOffset + 'px) translateY(' + sceneYOffset + 'px) translateZ(' + sceneZOffset + 'px)';
+
+    _camera.pos.x = 0;
+    _camera.pos.y = 0;
+    _camera.pos.z = 0;
+    _camera.rotation.x = 75;
+    _camera.rotation.y = 0;
+    _camera.rotation.z = 0;
+    _camera.render();
+
+    _level.offsetX = _container.clientWidth * 0.5 - _level.width * 0.5;;
+    _level.offsetZ = -_container.clientHeight * 0.36;
+    _level.pos.y = (_container.clientHeight * 1.3) - _level.height;
+    _level.render();
+
+    // _camera.el.style.transform = 'rotateX(75deg) rotateZ(0deg) translateX(' + sceneXOffset + 'px) translateY(' + sceneYOffset + 'px) translateZ(' + sceneZOffset + 'px)';
   }
 
 
@@ -116,7 +180,7 @@ var game = (function(){
       .update()
       .render();
 
-    _cones.forEach(function (cone, index) {
+    _level.cones.forEach(function (cone, index) {
       cone
         .update()
         .render();
@@ -131,6 +195,14 @@ var game = (function(){
 
   }
 
+  function Camera (el) {
+    Positionable(this);
+    Rotatable(this);
+    Scalable(this);
+    Renderable(this);
+    this.el = el;
+  }
+
   function Cone (color) {
     Templatable(this, 'cone');
     Positionable(this);
@@ -141,6 +213,7 @@ var game = (function(){
     this.pos.z = 1;
     this.colors = ['red','blue','gold','green'];
     this.coneAnimate = this.el.querySelector('.cone-animate');
+    this.coneAnimate.classList.add('fall'+(Math.ceil(rand(0,3))));
 
     this.setRandomColor = function () {
       var color = this.colors[Math.floor(rand(0,4))];
@@ -149,8 +222,6 @@ var game = (function(){
     };
 
     this.update = function () {
-      // this.rotation.z += 1;
-      // this.rotation.x = 90;
       var isHitX = this.pos.x > _player.pos.x - 5 && this.pos.x < _player.pos.x + 45,
           isHitY = this.pos.y + 30 < _player.pos.y && this.pos.y + 60 > _player.pos.y,
           isHit = isHitX && isHitY;
@@ -158,6 +229,7 @@ var game = (function(){
       if (isHit) {
         if (!this.el.classList.contains('cone-fall')) {
           this.rotation.z = rand(0,40);
+          body.trigger(new CustomEvent('hit-cone'));
         }
 
         this.el.classList.add('cone-fall');
@@ -259,24 +331,11 @@ var game = (function(){
         this.rotation.z = rz;
 
 
-        //--- TURN LEVEL
-        _level.pos.x = (-_player.pos.x + _level.width * 0.5) * 0.4;
-        // _level.rotation.z = this.rotation.z * -0.02;  // TODO
-
         // derive vel from turning angle
         this.vel.x = -this.speed * this.rotation.z / 90;
         // increment pos
         this.pos.x -= this.vel.x;
       }
-      return this;
-    };
-
-    this.turnWheels = function (angle) {
-      var rad = (angle / this.maxTurnAngle * PI) - PI*0.5;
-      var tireRotation = Math.cos(rad) * this.maxTurnAngle;
-
-      this.wheels.fl.el.style.transform = 'rotateY(90deg) translateX(-16px) rotateX(' + tireRotation + 'deg)';
-      this.wheels.fr.el.style.transform = 'rotateY(90deg) translateX(-16px) rotateX(' + tireRotation + 'deg)';
       return this;
     };
 
@@ -391,7 +450,7 @@ var game = (function(){
    *  LEVEL
    */
 
-  function Level () {
+  function Level (options) {
     Templatable(this, 'level');
     Collectable(this,'children');
     Positionable(this);
@@ -400,9 +459,13 @@ var game = (function(){
 
     this.width = 800;
     this.height = 2400;
+    this.offsetX = 0;
+    this.offsetZ = 0;
     this.rotation.x = 0;
     this.pos.y = 0;
     this.gridSize = 160;
+    this.cones = [];
+
 
     this.el.style.width = this.width + 'px';
     this.el.style.height = this.height + 'px';
@@ -412,21 +475,54 @@ var game = (function(){
     };
     Positionable(this.road);
 
+    this.setOptions = function (options) {
+      this.name = '';
+      this.numOfCones = options.numOfCones || 0;
+      this.topColor = options.topColor || '#757F9A';
+      this.botColor = options.botColor || '#D7DDE8';
+      this.createCones();
+      document.body.style.background = 'linear-gradient(180deg, ' + this.topColor + ' 0%, ' + this.botColor + ' 100%)';
+    };
 
+    this.createCones = function () {
+      var cone;
+
+      while (this.cones.length < this.numOfCones - 1) {
+        cone = new Cone();
+        cone.setRandomColor();
+        cone.pos.x = rand(50, this.width - 50);
+        cone.pos.y = rand(50, this.height - 50);
+        this.add(cone,'children');
+        this.cones.push(cone);
+      }
+      return this;
+    };
+    this.destroyCones = function () {
+      this.cones.forEach( function (cone, index, cones) {
+        cone.el.remove();
+      });
+      while(this.cones.length > 0) {
+        this.cones.pop();
+      }
+    };
     this.update = function () {
       var levelSpeed = _player.speed - Math.abs(_player.vel.x);
       this.road.pos.y -= levelSpeed;
       this.road.pos.y = this.road.pos.y < -this.gridSize ? this.road.pos.y%this.gridSize : this.road.pos.y;
       this.road.el.style.transform = 'translateY(' + -this.road.pos.y + 'px) translateZ(0px)';
 
+      //--- TURN LEVEL
+      this.pos.x = (-_player.pos.x + this.width * 0.5) * 0.4 + this.offsetX;
 
-      _cones.forEach(function (cone, index) {
+      this.pos.z = this.offsetZ;
+      this.cones.forEach(function (cone, index) {
         cone.pos.y += levelSpeed;
 
         // reset cone position
         if (cone.pos.y > _level.height) {
           cone.pos.y = 50;
           cone.pos.x = rand(0,_level.width-50);
+          cone.rotation.z = 0;
           cone.setRandomColor();
         }
       });
@@ -434,6 +530,8 @@ var game = (function(){
 
       return this;
     };
+
+    this.setOptions(options);
 
     return this;
   }
@@ -451,13 +549,13 @@ var game = (function(){
         this.step();
       }
       _isPaused = false;
-      _scene.classList.remove('game-paused');
+      _camera.el.classList.remove('game-paused');
       return this;
     },
     stop: function () {
       cancelAnimationFrame(this.requestId);
       _stopTime = time();
-      _scene.classList.add('game-paused');
+      _camera.el.classList.add('game-paused');
       _isPaused = true;
       return this;
     },
@@ -609,6 +707,37 @@ var game = (function(){
    *  UTILS
    */
 
+  function Sound(type, amt) {
+    var C = 261.626,
+        E = 329.628,
+        A = 220,
+        D = 293.665,
+        F = 349.228,
+        G = 195.998,
+        B = 246.942,
+        song = [C,C,E,E,A,A,C,C,D,D,F,F,G,G,B,B],
+        songLen = song.length,
+        osc = audioCtx.createOscillator();
+
+    play();
+
+
+    function play () {
+      var offset = 0,
+          audionode = audioCtx.createScriptProcessor(256, 0, 2);
+
+      osc.frequency.value = song[amt%songLen];
+      osc.connect(audioCtx.destination);
+      osc.start(0);
+
+      setTimeout(function () {
+        osc.stop(0);
+      },400);
+    }
+  }
+
+
+
   function delay (callback, time, context) {
     setTimeout((callback).bind(context),time);
   }
@@ -649,5 +778,8 @@ var game = (function(){
   }
   function rand (min,max) {
     return Math.random() * (max - min) + min;
+  }
+  function randInt (min,max) {
+    return Math.floor(rand(min,max));
   }
 })();

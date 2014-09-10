@@ -67,7 +67,7 @@ $btn_color: transparent;
 $primary_color: #3CD3AD;
 
 $default_camera_view:
-  rotateX(75deg) rotateZ(0deg) translateX(140px) translateY(1000px - $level_height) translateZ(-275px);
+  rotateX(75deg) rotateZ(0deg) translateX(140px) translateY(0) translateZ(-275px);
   // rotateX(75deg) rotateZ(0deg) translateX(269px) translateY(-4907px) translateZ(-205px); // close up
 
 @import "icons";
@@ -128,13 +128,13 @@ body {
 }
 
 
-.game-scene * {
+.game-camera * {
   position: absolute;
   top: 0;
   left: 0;
   display: block;
 }
-.game-scene {
+.game-camera {
   position: absolute;
   top: 0;
   left: 0;
@@ -153,7 +153,8 @@ body {
   }
 }
 .game-paused {
-  .car-transform {
+  .car-animate,
+  .cone-animate {
     -webkit-animation-play-state: paused;
   }
 }
@@ -176,7 +177,7 @@ $car_chrome_color: #aaa;
   -webkit-backface-visibility: hidden;
   transform-style: preserve-3d;
 }
-.car-transform {
+.car-animate {
   transform-style: preserve-3d;
   width: $car_width;
   height: $car_height;
