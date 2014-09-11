@@ -1,5 +1,5 @@
-$level_width: 800px;
-$level_height: 2400px;
+$level_width: 604px;
+$level_height: 2000px;
 
 
 $bg_color: linear-gradient(180deg, #283048 0%, #859398 100%);
@@ -12,50 +12,6 @@ $bg_color: linear-gradient(180deg, #003973 0%, #E5E5BE 100%);
 // default
 $bg_color: linear-gradient(180deg, #757F9A 0%, #D7DDE8 100%);
 
-
-// Mystic
-// Colour 1: #757F9A
-// Colour 2: #D7DDE8
-
-// Purple Paradise
-// Colour 1: #1D2B64
-// Colour 2: #F8CDDA
-
-// Sea Weed
-// Colour 1: #4CB8C4
-// Colour 2: #3CD3AD
-
-// Mojito
-// Colour 1: #1D976C
-// Colour 2: #93F9B9
-
-// Mirage
-// Colour 1: #16222A
-// Colour 2: #3A6073
-
-// Steel Gray
-// Colour 1: #1F1C2C
-// Colour 2: #928DAB
-
-// Venice Blue
-// Colour 1: #085078
-// Colour 2: #85D8CE
-
-// Moss
-// Colour 1: #134E5E
-// Colour 2: #71B280
-
-// Midnight City
-// Colour 1: #232526
-// Colour 2: #414345
-
-// Influenza
-// Colour 1: #C04848
-// Colour 2: #480048
-
-// Horizon
-// Colour 1: #003973
-// Colour 2: #E5E5BE
 
 
 $road_color: transparent;
@@ -81,7 +37,23 @@ body {
   font-family: "Futura", "Helvetica Nueue", sans-serif;
   color: #fff;
 }
-.btn {
+.bg-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  -webkit-transition: opacity 2s;
+
+  &.show {
+    opacity: 1;
+  }
+}
+button {
+  display: inline-block;
+  position: relative;
+  z-index: 10;
   border: 0;
   background-color: $btn_color;
   box-sizing: border-box;
@@ -95,12 +67,26 @@ body {
     background-color: rgba(255,255,255,.1);
   }
   &:active {
-    background-color: rgba(255,255,255,.2);
+    outline: 0;
+    border: solid 1px $primary_color;
+    box-shadow: 0 0 0 2px $primary_color;
   }
   &:focus {
     outline: 0;
     border: solid 1px $primary_color;
     box-shadow: 0 0 0 2px $primary_color;
+  }
+}
+.btn-primary {
+  background-color: $primary_color;
+  color: #fff;
+  border: solid 1px $primary_color;
+
+  &:hover {
+    background-color: darken($primary_color,5%);
+  }
+  &:active {
+    background-color: darken($primary_color,10%);
   }
 }
 .game-container {
@@ -579,42 +565,90 @@ $cone_color_green: #ABC78D;
 
 
 
-
 // MENUS / HUD
-.hud {
+.views {
   position: absolute;
   top: 0;
   left: 0;
   z-index: 1;
-  padding: 3%;
   width: 100%;
   height: 100%;
   box-sizing: border-box;
   text-align: right;
 }
-.views {
+.view {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+.view-content {
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
 }
-.title-view {
-  white-space: nowrap;
+.hud-view {
+  display: block;
+  .icon-pause {
+    position: absolute;
+    top: 3%;
+    right: 3%;
+  }
+  .combo-meter {
+    width: 40%;
+    height: 24px;
+    border: solid 1px #fff;
+    position: absolute;
+    top: 3%;
+    left: 50%;
+    margin: 10px -20%;
+    overflow: hidden;
+  }
+  .combo-meter-fill {
+    width: 0%;
+    height: 100%;
+    background: $primary_color;
+    transition: width .3s;
+  }
 }
-h1 {
-  font-weight: 600;
-  text-transform: uppercase;
-  border: solid 1px #fff;
-  display: inline-block;
-  padding: 40px;
-  text-align: center;
-  background: rgba(255,255,255,.5);
-  // color: $primary_color;
-  // text-shadow: 1px 1px 0 rgba(0,0,0,.2);
-  // border: solid 4px $primary_color;
-  // text-shadow:
-  //    -1px -1px 0 #fff,
-  //     1px -1px 0 #fff,
-  //     -1px 1px 0 #fff,
-  //      1px 1px 0 #fff;
+.view {
+  article {
+    text-transform: uppercase;
+    border: solid 1px #fff;
+    text-align: center;
+    background: rgba(255,255,255,.5);
+    font-weight: 600;
+    padding: 40px;
+  }
+}
+.levels {
+  display: block;
+  margin: 0 0 0;
+  font-size: 0;
+  max-width: 644px;
+  > * {
+    text-transform: uppercase;
+    font-weight: bold;
+    background-size: 300px;
+    margin: 5px;
+    font-size: 14px;
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+    border: solid 1px #fff;
+    transition: all .15s;
+    &.active,
+    &:active,
+    &:focus {
+      box-shadow:
+        0 0 0 2px #fff inset,
+        0 0 0 2px $primary_color;;
+    }
+  }
+}
+h1,
+h4 {
+  margin-top: 0;
 }

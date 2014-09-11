@@ -4,21 +4,44 @@
   <link rel="stylesheet" href="game.css">
 </head>
 <body>
+  <div class='bg-gradient'></div>
   <div class="game-container">
     <div id="game-canvas">
       <div id="game-camera" class="game-camera"></div>
     </div>
-    <div class="hud">
-      <button onclick="javascript:game.togglePlay()" class='btn icon-pause'></button>
-
-      <div class='views'>
-        <div class='title-view animated'>
-          <h1>
-            Super Pinto Rally Racer
-          </h1>
+    <div class='views'>
+      <div class='view title-view'>
+        <div class='view-content'>
+          <article>
+            <h1>
+              Super Pinto Rally Racer
+            </h1>
+            <button class='btn-primary' onclick="javascript:game.show('level-select')">
+              PLAY!
+            </button>
+          </article>
         </div>
       </div>
 
+      <div class='view level-select-view'>
+        <div class='view-content'>
+          <article>
+            <h4>
+              Pick a Level
+            </h4>
+            <div class='levels'></div>
+          </article>
+        </div>
+      </div>
+
+      <div class='view hud-view'>
+        <div class='view-content'>
+          <button onclick="javascript:game.togglePlay()" class='icon-pause'></button>
+          <div class='combo-meter'>
+            <div class='combo-meter-fill'></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

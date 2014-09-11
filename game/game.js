@@ -1,5 +1,10 @@
 Element.prototype.on = Element.prototype.addEventListener;
 Element.prototype.off = Element.prototype.removeEventListener;
+Element.prototype.index = function (child) {
+  for(var i=0; i<this.children.length; i++) {
+    if (child==this.children[i]) return i;
+  }
+};
 EventTarget.prototype.trigger = EventTarget.prototype.dispatchEvent;
 window.$ = function (q) { return document.querySelector(q); };
 window.toInt = window.parseInt;
@@ -13,7 +18,7 @@ window.body = document.body;
 var game = (function(){
   var _container = $('.game-container'),
       _canvas = $('#game-canvas'),
-      _scene = $('#game-scene'),
+      _camera = new Camera($('#game-camera')),
       _templates = {
         car: $('#car-template'),
         level: $('#level-template'),
@@ -21,26 +26,61 @@ var game = (function(){
         cone: $('#cone-template'),
         pintoSide: $('#pinto-side-template')
       },
-      _views = {
-        title: $('.title-view')
-      },
       _cameraPerspective = 500,
       _startTime = null,
       _playerYOffset = 0.45,
       _hasInit = false,
       _isPaused = true,
       _totalConesHit = 0,
+      _requestId,
       _player,
       _playerShadow,
       _level,
       _playerController,
-      _sceneResizeTimeout;
+      _cameraResizeTimeout;
+
 
   var _levels = [
       {
-        numOfCones: 12,
+        name: 'Training',
+        numOfCones: 0,
+        topColor: '#757F9A',
+        botColor: '#D7DDE8'
+      },{
+        name: 'Paradise',
+        numOfCones: 20,
         topColor: '#1D2B64',
         botColor: '#F8CDDA'
+      },{
+        name: 'Sea Weed',
+        numOfCones: 20,
+        topColor: '#4CB8C4',
+        botColor: '#3CD3AD'
+      },{
+        name: 'Mirage',
+        numOfCones: 20,
+        topColor: '#16222A',
+        botColor: '#3A6073'
+      },{
+        name: 'Steel Gray',
+        numOfCones: 20,
+        topColor: '#1F1C2C',
+        botColor: '#928DAB'
+      },{
+        name: 'Venice Blue',
+        numOfCones: 20,
+        topColor: '#085078',
+        botColor: '#85D8CE'
+      },{
+        name: 'Moss',
+        numOfCones: 20,
+        topColor: '#134E5E',
+        botColor: '#71B280'
+      },{
+        name: 'Influenza',
+        numOfCones: 20,
+        topColor: '#C04848',
+        botColor: '#480048'
       }
     ];
 
@@ -52,31 +92,44 @@ var game = (function(){
       _player,
       { padding: 3 });
 
-    _level = new Level(_levels[0]);
-
-
+    _level            = new Level(_levels[0]);
     _playerController = new PlayerController(_player);
 
-    _views.title.classList.add('bounceInDown');
-
-    delay(function () {
-      _views.title.classList.add('bounceOutUp');
-      _views.title.classList.remove('bounceInDown');
-    },3000,this);
-
-    // $('#yourElement').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', doSomething);
-
+    $('.title-view').classList.add('animated','bounceInDown');
 
     _level.add(_player,'children');
     _level.add(_playerShadow,'children');
-    _scene.appendChild(_level.el);
+    _camera.el.appendChild(_level.el);
 
     updateScene();
 
     body.on('hit-cone', function () {
       _totalConesHit++;
+      $('.combo-meter-fill').style.width = _totalConesHit + '%';
       Sound('cone_hit',_totalConesHit);
     });
+
+
+    // init level buttons
+    var lvlData,
+        lvlBtn;
+
+    for (var i=0; i < _levels.length; i++) {
+      lvlData = _levels[i];
+      lvlBtn = document.createElement('button');
+      lvlBtn.innerText = lvlData.name;
+      lvlBtn.style.backgroundImage = linearGradient(lvlData.topColor,lvlData.botColor);
+      $('.levels').appendChild(lvlBtn);
+    }
+    $('.levels').on('click', function (e) {
+      var index = e.currentTarget.index(e.target);
+      for(var i=0; i<e.currentTarget.children.length; i++) {
+        e.currentTarget.children[i].classList.remove('active');
+      }
+      e.target.classList.add('active');
+      game.show('gameplay',index);
+    });
+    // end init level buttons
 
     window.onresize = onSceneResize;
     window.player = _player;
@@ -86,17 +139,27 @@ var game = (function(){
 
 
   function onSceneResize () {
-    clearTimeout( _sceneResizeTimeout );
-    _sceneResizeTimeout = setTimeout(function () { updateScene(); }, 300);
+    clearTimeout( _cameraResizeTimeout );
+    _cameraResizeTimeout = setTimeout(function () { updateScene(); }, 300);
   }
 
   function updateScene () {
-    var sceneXOffset = _container.clientWidth * 0.5 - _level.width * 0.5,
-      sceneYOffset = (_container.clientHeight * 1.3) - _level.height,
-      sceneZOffset = -_container.clientHeight * 0.36;
-
     _player.pos.y = _level.height - (_playerYOffset * _container.clientHeight);
-    _scene.style.transform = 'rotateX(75deg) rotateZ(0deg) translateX(' + sceneXOffset + 'px) translateY(' + sceneYOffset + 'px) translateZ(' + sceneZOffset + 'px)';
+
+    _camera.pos.x = 0;
+    _camera.pos.y = 0;
+    _camera.pos.z = 0;
+    _camera.rotation.x = 75;
+    _camera.rotation.y = 0;
+    _camera.rotation.z = 0;
+    _camera.render();
+
+    _level.offsetX = _container.clientWidth * 0.5 - _level.width * 0.5;;
+    _level.offsetZ = -_container.clientHeight * 0.36;
+    _level.pos.y = (_container.clientHeight * 1.3) - _level.height;
+    _level.render();
+
+    // _camera.el.style.transform = 'rotateX(75deg) rotateZ(0deg) translateX(' + sceneXOffset + 'px) translateY(' + sceneYOffset + 'px) translateZ(' + sceneZOffset + 'px)';
   }
 
 
@@ -115,11 +178,11 @@ var game = (function(){
       .update()
       .render();
 
-    _level.cones.forEach(function (cone, index) {
-      cone
+    for (var i = _level.cones.length - 1; i >= 0; --i) {
+      _level.cones[i]
         .update()
         .render();
-    });
+    }
 
     if (_cameraPerspective >= 1200) {
       _cameraPerspective = 1200;
@@ -128,6 +191,14 @@ var game = (function(){
     }
     _canvas.style.perspective = _cameraPerspective + 'px';
 
+  }
+
+  function Camera (el) {
+    Positionable(this);
+    Rotatable(this);
+    Scalable(this);
+    Renderable(this);
+    this.el = el;
   }
 
   function Cone (color) {
@@ -189,7 +260,6 @@ var game = (function(){
       this.rotation.x = this.target.rotation.x;
       // this.rotation.y = this.target.rotation.y;
       this.rotation.z = this.target.rotation.z;
-
       return this;
     };
     return this;
@@ -368,6 +438,7 @@ var game = (function(){
     Templatable(this, 'wheel');
     Positionable(this);
     Rotatable(this);
+    Scalable(this);
     Renderable(this);
 
     return this;
@@ -382,19 +453,17 @@ var game = (function(){
     Collectable(this,'children');
     Positionable(this);
     Rotatable(this);
+    Scalable(this);
     Renderable(this);
 
-    this.width = 800;
-    this.height = 2400;
+    this.width = 604;
+    this.height = 2000;
+    this.offsetX = 0;
+    this.offsetZ = 0;
     this.rotation.x = 0;
     this.pos.y = 0;
     this.gridSize = 160;
     this.cones = [];
-    this.numOfCones = options.numOfCones || 10;
-    this.topColor = options.topColor || '#757F9A';
-    this.botColor = options.botColor || '#D7DDE8';
-
-    document.body.style.background = 'linear-gradient(180deg, ' + this.topColor + ' 0%, ' + this.botColor + ' 100%)';
 
     this.el.style.width = this.width + 'px';
     this.el.style.height = this.height + 'px';
@@ -403,6 +472,24 @@ var game = (function(){
       el: this.el.getElementsByClassName('road')[0]
     };
     Positionable(this.road);
+
+    this.setOptions = function (options) {
+      this.name = '';
+      if (options.numOfCones) this.numOfCones = options.numOfCones;
+      if (options.topColor) this.topColor = options.topColor;
+      if (options.botColor) this.botColor = options.botColor;
+      this.createCones();
+      this.changeBg(this.topColor, this.botColor);
+    };
+
+    this.changeBg = function (topColor, botColor) {
+      $('.bg-gradient').style.background = linearGradient(topColor,botColor);
+      $('.bg-gradient').classList.add('show');
+      delay(function () {
+        document.body.style.background = linearGradient(topColor,botColor);
+        $('.bg-gradient').classList.remove('show');
+      }, 2000, this);
+    };
 
     this.createCones = function () {
       var cone;
@@ -425,16 +512,16 @@ var game = (function(){
         this.cones.pop();
       }
     };
-
     this.update = function () {
       var levelSpeed = _player.speed - Math.abs(_player.vel.x);
       this.road.pos.y -= levelSpeed;
       this.road.pos.y = this.road.pos.y < -this.gridSize ? this.road.pos.y%this.gridSize : this.road.pos.y;
       this.road.el.style.transform = 'translateY(' + -this.road.pos.y + 'px) translateZ(0px)';
 
-        //--- TURN LEVEL
-      this.pos.x = (-_player.pos.x + this.width * 0.5) * 0.4;
+      //--- TURN LEVEL
+      this.pos.x = (-_player.pos.x + this.width * 0.5) * 0.4 + this.offsetX;
 
+      this.pos.z = this.offsetZ;
       this.cones.forEach(function (cone, index) {
         cone.pos.y += levelSpeed;
 
@@ -446,14 +533,18 @@ var game = (function(){
           cone.setRandomColor();
         }
       });
-
-
       return this;
     };
-
-    this.createCones();
-
+    this.setOptions(options);
     return this;
+  }
+
+
+  function step (timestamp) {
+    if (_startTime === null) _startTime = timestamp;
+    var progress = timestamp - _startTime;
+    _requestId = requestAnimationFrame(step);
+    onStep();
   }
 
   return {
@@ -466,25 +557,37 @@ var game = (function(){
         init();
       }
       if (_isPaused) {
-        this.step();
+        step();
       }
       _isPaused = false;
-      _scene.classList.remove('game-paused');
+      _camera.el.classList.remove('game-paused');
       return this;
     },
     stop: function () {
-      cancelAnimationFrame(this.requestId);
+      cancelAnimationFrame(_requestId);
       _stopTime = time();
-      _scene.classList.add('game-paused');
+      _camera.el.classList.add('game-paused');
       _isPaused = true;
       return this;
     },
-    step: function (timestamp) {
-      var progress;
-      if (_startTime === null) _startTime = timestamp;
-      progress = timestamp - _startTime;
-      this.requestId = requestAnimationFrame(this.step.bind(this));
-      onStep();
+    setLevel: function (num) {
+      _level.setOptions(_levels[num]);
+    },
+    show: function (view,levelNum) {
+      if (view=='level-select') {
+        $('.title-view').classList.add('exitOutDown');
+        $('.title-view').classList.remove('bounceInDown');
+        $('.level-select-view').classList.add('animated', 'bounceInDown');
+      }
+      if (view=='gameplay') {
+        // $('.title-view').classList.add('bounceInDown');
+        $('.level-select-view').classList.add('exitOutDown');
+        $('.level-select-view').classList.remove('bounceInDown');
+
+        delay(function (){
+          this.setLevel(levelNum);
+        },1000,this);
+      }
     }
   };
 
@@ -596,20 +699,20 @@ var game = (function(){
     };
     o.render = function () {
       var s = {
-            x: o.scale? o.scale.x : 1,
-            y: o.scale? o.scale.y : 1,
-            z: o.scale? o.scale.z : 1
-          },
-          p = {
-            x: o.pos.x,
-            y: o.pos.y,
-            z: o.pos.z,
-          },
-          r = {
-            x: o.rotation.x,
-            y: o.rotation.y,
-            z: o.rotation.z,
-          };
+        x: o.scale.x,
+        y: o.scale.y,
+        z: o.scale.z
+      },
+      p = {
+        x: o.pos.x,
+        y: o.pos.y,
+        z: o.pos.z,
+      },
+      r = {
+        x: o.rotation.x,
+        y: o.rotation.y,
+        z: o.rotation.z,
+      };
 
       // o.el.style.transform = new Matrix().rotate(r.x, 0, 0).rotate(0, r.y, 0).rotate(0, 0, r.z).scale(s.x, s.y, s.z).translate(p.x, p.y, p.z)
       o.el.style.transform = 'translate3d(' + p.x + 'px, ' + p.y + 'px, ' + p.z + 'px) ' +
@@ -637,7 +740,8 @@ var game = (function(){
         B = 246.942,
         song = [C,C,E,E,A,A,C,C,D,D,F,F,G,G,B,B],
         songLen = song.length,
-        osc = audioCtx.createOscillator();
+        osc = audioCtx.createOscillator(),
+        gain = audioCtx.createGain();
 
     play();
 
@@ -646,18 +750,22 @@ var game = (function(){
       var offset = 0,
           audionode = audioCtx.createScriptProcessor(256, 0, 2);
 
+      osc.type = 'square';
       osc.frequency.value = song[amt%songLen];
       osc.connect(audioCtx.destination);
       osc.start(0);
+      window.osc = osc;
 
       setTimeout(function () {
         osc.stop(0);
-      },400);
+      },600);
     }
   }
 
 
-
+  function linearGradient (topColor,botColor) {
+    return 'linear-gradient(180deg, ' + topColor + ' 0%, ' + botColor + ' 100%)';
+  }
   function delay (callback, time, context) {
     setTimeout((callback).bind(context),time);
   }
@@ -698,5 +806,8 @@ var game = (function(){
   }
   function rand (min,max) {
     return Math.random() * (max - min) + min;
+  }
+  function randInt (min,max) {
+    return Math.floor(rand(min,max));
   }
 })();
