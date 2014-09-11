@@ -583,9 +583,11 @@ var game = (function(){
         // $('.title-view').classList.add('bounceInDown');
         $('.level-select-view').classList.add('exitOutDown');
         $('.level-select-view').classList.remove('bounceInDown');
+        $('.hud-view').classList.add('animated', 'bounceInDown');
 
         delay(function (){
           this.setLevel(levelNum);
+          game.start();
         },1000,this);
       }
     }

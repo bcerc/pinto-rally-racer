@@ -615,26 +615,24 @@ button {
   align-items: center;
   justify-content: center; }
 
-.hud-view {
-  display: block; }
-  .hud-view .icon-pause {
-    position: absolute;
-    top: 3%;
-    right: 3%; }
-  .hud-view .combo-meter {
-    width: 40%;
-    height: 24px;
-    border: solid 1px #fff;
-    position: absolute;
-    top: 3%;
-    left: 50%;
-    margin: 10px -20%;
-    overflow: hidden; }
-  .hud-view .combo-meter-fill {
-    width: 0%;
-    height: 100%;
-    background: #3cd3ad;
-    transition: width .3s; }
+.hud-view .icon-pause {
+  position: absolute;
+  top: 3%;
+  right: 3%; }
+.hud-view .combo-meter {
+  width: 40%;
+  height: 24px;
+  border: solid 1px #fff;
+  position: absolute;
+  top: 3%;
+  left: 50%;
+  margin: 10px -20%;
+  overflow: hidden; }
+.hud-view .combo-meter-fill {
+  width: 0%;
+  height: 100%;
+  background: #3cd3ad;
+  transition: width .3s; }
 
 .view article {
   text-transform: uppercase;
