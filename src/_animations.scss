@@ -96,18 +96,31 @@
     -webkit-transform: translate3d(0, 0, 0);
             transform: translate3d(0, 0, 0);
   }
-
-
   100% {
     opacity: 0;
     -webkit-transform: translate3d(0, 2000px, 0);
             transform: translate3d(0, 2000px, 0);
   }
 }
-
 .exitOutDown {
   -webkit-animation-name: exitOutDown;
           animation-name: exitOutDown;
+}
+
+@-webkit-keyframes exitOutUp {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+  }
+  100% {
+    opacity: 0;
+    -webkit-transform: translate3d(0, -2000px, 0);
+            transform: translate3d(0, -2000px, 0);
+  }
+}
+.exitOutUp {
+  -webkit-animation-name: exitOutUp;
+          animation-name: exitOutUp;
 }
 
 

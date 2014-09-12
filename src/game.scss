@@ -23,7 +23,7 @@ $btn_color: transparent;
 $primary_color: #3CD3AD;
 
 $default_camera_view:
-  rotateX(75deg) rotateZ(0deg) translateX(140px) translateY(0) translateZ(-275px);
+  translate3d(0px, -170px, 600px) scale3d(1, 1, 1) rotateX(75deg) rotateZ(0deg) rotateY(0deg);
   // rotateX(75deg) rotateZ(0deg) translateX(269px) translateY(-4907px) translateZ(-205px); // close up
 
 @import "icons";
@@ -95,8 +95,8 @@ button {
   overflow: hidden;
   width: 100%;
   height: 100%;
-  max-width: 1200px;
-  max-height: 800px;
+  max-width: 1000px;
+  max-height: 700px;
 }
 
 #game-canvas {
@@ -122,14 +122,21 @@ button {
 }
 .game-camera {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 0;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background: #000;
   transform-style: preserve-3d;
   transform: $default_camera_view;
   transform-origin: 50% 50%;
   -webkit-backface-visibility: hidden;
+
+
+  // -webkit-animation-name: cameraSpin;
+  // -webkit-animation-duration: 16s;
+  // -webkit-animation-iteration-count: infinite;
+  // -webkit-animation-timing-function: linear;
 
   * {
     position: absolute;
@@ -138,6 +145,19 @@ button {
     display: block;
   }
 }
+
+@-webkit-keyframes cameraSpin {
+  0% {
+    transform: translate3d(0px, -170px, 600px) scale3d(1, 1, 1) rotateX(75deg) rotateZ(0deg) rotateY(0deg)
+  }
+  100% {
+    transform: translate3d(0px, -170px, 600px) scale3d(1, 1, 1) rotateX(75deg) rotateZ(360deg) rotateY(0deg)
+  }
+}
+
+// translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(75deg) rotateZ(0deg) rotateY(0deg);
+
+
 .game-paused {
   .car-animate,
   .cone-animate {
@@ -647,6 +667,25 @@ $cone_color_green: #ABC78D;
     }
   }
 }
+kbd {
+  display: inline-block;
+  padding: 5px 5px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  font-size: 14px;
+  border-radius: 3px;
+  border: solid 1px #fff;
+  text-align: center;
+  font-family: "Futura", "Helvetica Nueue", sans-serif;
+}
+.directions {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}
+
 h1,
 h4 {
   margin-top: 0;

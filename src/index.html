@@ -19,6 +19,16 @@
             <button class='btn-primary' onclick="javascript:game.show('level-select')">
               PLAY!
             </button>
+            <section class='directions'>
+              CONTROLS
+              <p>
+                <kbd>A</kbd>
+                <kbd>D</kbd>
+                <small>or</small>
+                <kbd>&larr;</kbd>
+                <kbd>&rarr;</kbd>
+              </p>
+            </section>
           </article>
         </div>
       </div>
@@ -27,16 +37,31 @@
         <div class='view-content'>
           <article>
             <h4>
-              Pick a Level
+              PICK A LEVEL
             </h4>
             <div class='levels'></div>
           </article>
         </div>
       </div>
 
+      <div class='view pause-view'>
+        <div class='view-content'>
+          <article>
+            <h4>
+              PAUSED
+            </h4>
+            <button class='btn-primary' onclick="javascript:game.show('gameplay')">
+              RESUME
+            </button>
+
+          </article>
+        </div>
+      </div>
+
+
       <div class='view hud-view'>
         <div class='view-content'>
-          <button onclick="javascript:game.togglePlay()" class='icon-pause'></button>
+          <button onclick="javascript:game.show('pause')" class='icon-pause'></button>
           <div class='combo-meter'>
             <div class='combo-meter-fill'></div>
           </div>

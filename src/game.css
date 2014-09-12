@@ -143,6 +143,19 @@
   -webkit-animation-name: exitOutDown;
   animation-name: exitOutDown; }
 
+@-webkit-keyframes exitOutUp {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0); }
+
+  100% {
+    opacity: 0;
+    -webkit-transform: translate3d(0, -2000px, 0);
+    transform: translate3d(0, -2000px, 0); } }
+.exitOutUp {
+  -webkit-animation-name: exitOutUp;
+  animation-name: exitOutUp; }
+
 /*
  *  CONE ANIMATIONS
  */
@@ -267,8 +280,8 @@ button {
   overflow: hidden;
   width: 100%;
   height: 100%;
-  max-width: 1200px;
-  max-height: 800px; }
+  max-width: 1000px;
+  max-height: 700px; }
 
 #game-canvas {
   position: relative;
@@ -289,12 +302,13 @@ button {
 
 .game-camera {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 0;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background: #000;
   transform-style: preserve-3d;
-  transform: rotateX(75deg) rotateZ(0deg) translateX(140px) translateY(0) translateZ(-275px);
+  transform: translate3d(0px, -170px, 600px) scale3d(1, 1, 1) rotateX(75deg) rotateZ(0deg) rotateY(0deg);
   transform-origin: 50% 50%;
   -webkit-backface-visibility: hidden; }
   .game-camera * {
@@ -303,6 +317,12 @@ button {
     left: 0;
     display: block; }
 
+@-webkit-keyframes cameraSpin {
+  0% {
+    transform: translate3d(0px, -170px, 600px) scale3d(1, 1, 1) rotateX(75deg) rotateZ(0deg) rotateY(0deg); }
+
+  100% {
+    transform: translate3d(0px, -170px, 600px) scale3d(1, 1, 1) rotateX(75deg) rotateZ(360deg) rotateY(0deg); } }
 .game-paused .car-animate,
 .game-paused .cone-animate {
   -webkit-animation-play-state: paused; }
@@ -660,6 +680,24 @@ button {
     transition: all .15s; }
     .levels > *.active, .levels > *:active, .levels > *:focus {
       box-shadow: 0 0 0 2px white inset, 0 0 0 2px #3cd3ad; }
+
+kbd {
+  display: inline-block;
+  padding: 5px 5px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  font-size: 14px;
+  border-radius: 3px;
+  border: solid 1px #fff;
+  text-align: center;
+  font-family: "Futura", "Helvetica Nueue", sans-serif; }
+
+.directions {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%; }
 
 h1,
 h4 {
