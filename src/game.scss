@@ -26,7 +26,6 @@ $default_camera_view:
   translate3d(0px, -170px, 600px) scale3d(1, 1, 1) rotateX(75deg) rotateZ(0deg) rotateY(0deg);
   // rotateX(75deg) rotateZ(0deg) translateX(269px) translateY(-4907px) translateZ(-205px); // close up
 
-@import "icons";
 @import "animations";
 body {
   padding: 0;
@@ -51,6 +50,20 @@ li {
 em {
   color: $primary_color;
   text-shadow: 1px 1px 0 rgba(0,0,0,.2);
+}
+.credits {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  width: 1000px;
+  margin: 0 auto;
+  z-index: 2;
+  font-size: 12px;
+  a {
+    color: #fff;
+    text-decoration: none;
+    border-bottom: dotted 1px #fff;
+  }
 }
 .bg-gradient {
   position: absolute;
@@ -659,6 +672,26 @@ $cone_color_green: #ABC78D;
   .icon-pause {
     top: 3%;
     right: 3%;
+    margin-top: -2px;
+    &::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 24px;
+    }
+    &::after {
+      content: '';
+      position: absolute;
+      display: block;
+      top: 12px;
+      left: 12px;
+      width: 0;
+      height: 20px;
+      border: solid #fff;
+      border-width: 0 6px;
+      padding: 0 6px 0 0;
+      box-sizing: border-box;
+    }
   }
   .progress {
     width: 40%;
@@ -774,30 +807,6 @@ $cone_color_green: #ABC78D;
         -webkit-animation-iteration-count: infinite;
       }
     }
-  }
-}
-.level-rating {
-  pointer-events: none;
-  min-height: 24px;
-  margin-top: 5px;
-  > * {
-    display: inline-block;
-    font-size: 24px;
-  }
-  .icon-star::before {
-    color: $primary_color;
-    text-shadow:
-      1px 0 0 #fff,
-      1px 1px 0 #fff,
-      0 1px 0 #fff,
-      -1px 1px 0 #fff,
-      1px -1px 0 #fff,
-      -1px -1px 0 #fff,
-      -1px 0 0 #fff,
-      0 -1px 0 #fff;
-  }
-  .icon-star-empty {
-    color: rgba(255,255,255,.7);
   }
 }
 .level-time {

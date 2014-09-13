@@ -71,30 +71,33 @@ var game = (function(){
         ]
       },{
         name: 'Big Basin',
-        numCones: 12,
+        numCones: 6,
         coneColors: ['green'],
-        bonusConeRatio: 0,
-        scoreToWin: 10,
+        bonusConeRatio: 0.3,
+        scoreToWin: 100,
         userTime: retreive('lvl2time') || '0.00',
         speed: 24,
         topColor: '#16222A',
         botColor: '#3A6073',
         patterns: [
-          makeWavePattern(0.5, 70, 10, 1)
+          makeWavePattern(0.3, 120, 10, 1)
         ]
       },{
         name: 'Alcatraz',
-        numCones: 4,
+        numCones: 2,
         coneColors: ['red'],
         bonusConeRatio: 0.6,
         scoreToWin: 120,
         userTime: retreive('lvl3time') || '0.00',
-        speed: 30,
+        speed: 14,
         topColor: '#1F1C2C',
         botColor: '#928DAB',
         patterns: [
           function (n) {
-            return rand(120, _level.width-120)
+            var os = 200 + _player.boost() * 2,
+                p = rand(os, _level.width-os);
+
+            return p;
           }
         ]
       },{
@@ -143,10 +146,10 @@ var game = (function(){
         ]
       },{
         name: 'The Abyss',
-        numCones: 32,
+        numCones: 40,
         coneColors: ['red'],
         bonusConeRatio: 0.666,
-        scoreToWin: 60,
+        scoreToWin: 666,
         userTime: retreive('lvl7time') || '0.00',
         speed: 46,
         topColor: '#000',
