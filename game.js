@@ -4,15 +4,20 @@ Element.prototype.index = function (child) {
   for(var i=0; i<this.children.length; i++) {
     if (child==this.children[i]) return i;
   }
+  return 0;
 };
 EventTarget.prototype.trigger = EventTarget.prototype.dispatchEvent;
-window.$ = function (q) { return document.querySelector(q); };
+window.$ = function (q) {
+  var items = document.querySelectorAll(q);
+  return items.length === 1 ? items[0] : items;
+};
 window.toInt = window.parseInt;
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.oRequestAnimationFrame;
 window.cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame || window.oCancelAnimationFrame;
 window.Matrix = window.WebKitCSSMatrix || window.MSCSSMatrix || window.CSSMatrix;
 window.PI = Math.PI;
 window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+window.store = window.localStorage;
 window.body = document.body;
 
 var game = (function(){
@@ -29,64 +34,131 @@ var game = (function(){
       _cameraPerspective = 500,
       _hasInit = false,
       _isPaused = true,
-      _totalConesHit = 0,
       _requestId,
       _player,
       _playerShadow,
       _level,
       _playerController,
-      _cameraResizeTimeout;
+      _cameraResizeTimeout,
 
-
-  var _levels = [
+      _levels = [
       {
-        name: 'Training',
-        numOfCones: 0,
-        speed: 18,
-        topColor: '#757F9A',
-        botColor: '#D7DDE8'
-      },{
-        name: 'Paradise',
-        numOfCones: 6,
+        name: 'Twin Peaks',
+        numCones: 4,
+        coneColors: ['blue'],
+        bonusConeRatio: 0.2,
+        scoreToWin: 50,
+        userTime: retreive('lvl0time') || '0.00',
         speed: 18,
         topColor: '#1D2B64',
-        botColor: '#F8CDDA'
+        botColor: '#F8CDDA',
+        patterns: [
+          // ampMulti, conesPerWave, len, dir
+          makeWavePattern(0.5, 70, 10, 1)
+        ]
       },{
-        name: 'Sea Weed',
-        numOfCones: 8,
-        speed: 18,
+        name: 'Stinson',
+        numCones: 8,
+        coneColors: ['blue'],
+        bonusConeRatio: 0.1,
+        scoreToWin: 70,
+        userTime: retreive('lvl1time') || '0.00',
+        speed: 24,
         topColor: '#4CB8C4',
-        botColor: '#3CD3AD'
+        botColor: '#3CD3AD',
+        patterns: [
+          makeWavePattern(0.15, 40, 70, 1)
+        ]
       },{
-        name: 'Mirage',
-        numOfCones: 10,
-        speed: 18,
+        name: 'Big Basin',
+        numCones: 6,
+        coneColors: ['green'],
+        bonusConeRatio: 0.3,
+        scoreToWin: 100,
+        userTime: retreive('lvl2time') || '0.00',
+        speed: 24,
         topColor: '#16222A',
-        botColor: '#3A6073'
+        botColor: '#3A6073',
+        patterns: [
+          makeWavePattern(0.3, 120, 10, 1)
+        ]
       },{
-        name: 'Steel Gray',
-        numOfCones: 12,
-        speed: 18,
+        name: 'Alcatraz',
+        numCones: 2,
+        coneColors: ['red'],
+        bonusConeRatio: 0.6,
+        scoreToWin: 120,
+        userTime: retreive('lvl3time') || '0.00',
+        speed: 14,
         topColor: '#1F1C2C',
-        botColor: '#928DAB'
+        botColor: '#928DAB',
+        patterns: [
+          function (n) {
+            var os = 200 + _player.boost() * 2,
+                p = rand(os, _level.width-os);
+
+            return p;
+          }
+        ]
       },{
-        name: 'Venice Blue',
-        numOfCones: 14,
-        speed: 18,
+        name: 'Ocean Beach',
+        numCones: 14,
+        coneColors: ['green'],
+        bonusConeRatio: 0,
+        scoreToWin: 10,
+        userTime: retreive('lvl4time') || '0.00',
+        speed: 24,
         topColor: '#085078',
-        botColor: '#85D8CE'
+        botColor: '#85D8CE',
+        patterns: [
+          makeWavePattern(0.5, 70, 10, 1)
+        ]
       },{
-        name: 'Moss',
-        numOfCones: 16,
-        speed: 18,
+        name: 'Muir Woods',
+        numCones: 8,
+        coneColors: ['green'],
+        bonusConeRatio: 0.5,
+        scoreToWin: 40,
+        userTime: retreive('lvl5time') || '0.00',
+        speed: 22,
         topColor: '#134E5E',
-        botColor: '#71B280'
+        botColor: '#71B280',
+        patterns: [
+          makeWavePattern(0.6, 70, 5, 1)
+        ]
       },{
-        name: 'Influenza',
-        numOfCones: 18,
-        speed: 18,
+        name: 'San Quentin',
+        numCones: 12,
+        coneColors: ['red'],
+        bonusConeRatio: 0.4,
+        scoreToWin: 180,
+        userTime: retreive('lvl6time') || '0.00',
+        speed: 24,
         topColor: '#C04848',
-        botColor: '#480048'
+        botColor: '#480048',
+        patterns: [
+          function (n) {
+            n = rand(0, n * 10);
+            n %= _level.width - 300;
+            n += 150;
+            return n;
+          }
+        ]
+      },{
+        name: 'The Abyss',
+        numCones: 40,
+        coneColors: ['red'],
+        bonusConeRatio: 0.666,
+        scoreToWin: 666,
+        userTime: retreive('lvl7time') || '0.00',
+        speed: 46,
+        topColor: '#000',
+        botColor: '#000',
+        patterns: [
+          function (n) {
+            return rand(50, _level.width-50)
+          }
+        ]
       }
     ];
 
@@ -98,8 +170,9 @@ var game = (function(){
       _player,
       { padding: 3 });
 
-    _level            = new Level(_levels[0]);
+    _level = new Level(_levels[0]);
     _playerController = new PlayerController(_player);
+    _level.destroyCones();
 
     $('.title-view').classList.add('animated','bounceInDown');
 
@@ -109,41 +182,87 @@ var game = (function(){
 
     updateScene();
 
-    body.on('hit-cone', function () {
-      _totalConesHit++;
-      $('.combo-meter-fill').style.width = _totalConesHit + '%';
-      Sound('cone_hit',_totalConesHit);
-    });
+    body.on('hit-cone', function (e) {
+      var cone = e.detail.cone,
+        points = 1;
 
+      _level.numConesHit++;
+      _level.numCombo++;
+
+      if (_level.numCombo > 3) {
+        $('.combo-counter').innerText = _level.numCombo;
+        $('.combo-counter-animate').classList.add('show');
+      }
+
+      if (cone && cone.color === 'gold') {
+        points = 4;
+        Sound('triangle',_level.numConesHit, true);
+      }
+
+      Sound('sine',_level.numConesHit);
+
+      points = _level.score + points;
+      _level.setScore(points);
+
+      if (_level.percentComplete() >= 100) {
+        _level.finished();
+      }
+
+    });
 
     // init level buttons
     var lvlData,
-        lvlBtn;
+        lvlBtn,
+        lvlRating,
+        lvlTime,
+        star;
 
     for (var i=0; i < _levels.length; i++) {
       lvlData = _levels[i];
-      lvlBtn = document.createElement('button');
+      lvlBtn = el('button');
       lvlBtn.innerText = lvlData.name;
+      // lvlRating = el('div');
+      // lvlRating.classList.add('level-rating');
+      // lvlBtn.appendChild(lvlRating);
+
+      // if (lvlData.rating !== undefined) {
+      //   for (var j=0; j < 3; j++) {
+      //     star = el('div');
+      //     if (j < lvlData.rating) {
+      //       star.classList.add('icon-star');
+      //     } else {
+      //       star.classList.add('icon-star-empty');
+      //     }
+      //     lvlRating.appendChild(star);
+      //   }
+      // }
+
+      lvlTime = el('div');
+      lvlTime.className = 'level-time';
+      lvlTime.innerText = lvlData.userTime;
+      lvlBtn.appendChild(lvlTime);
+
       lvlBtn.style.backgroundImage = linearGradient(lvlData.topColor,lvlData.botColor);
       $('.levels').appendChild(lvlBtn);
     }
     $('.levels').on('click', function (e) {
-      var index = e.currentTarget.index(e.target);
-      for(var i=0; i<e.currentTarget.children.length; i++) {
-        e.currentTarget.children[i].classList.remove('active');
+      if (e.target !== e.currentTarget) {
+        var lvlIndex = e.currentTarget.index(e.target);
+        _level.restart();
+        game.setLevel(lvlIndex);
+        game.setView('hud-view');
+        game.start();
       }
-      e.target.classList.add('active');
-      game.show('gameplay',index);
     });
     // end init level buttons
 
     window.onresize = onSceneResize;
+
     window.player = _player;
     window.playerShadow = _playerShadow;
     window.level = _level;
     window.camera = _camera;
   }
-
 
   function onSceneResize () {
     clearTimeout( _cameraResizeTimeout );
@@ -180,9 +299,11 @@ var game = (function(){
       .render();
 
     for (var i = _level.cones.length - 1; i >= 0; --i) {
-      _level.cones[i]
-        .update()
-        .render();
+      if (_level.cones[i]) {
+        _level.cones[i]
+          .update()
+          .render();
+      }
     }
 
     if (_cameraPerspective >= 1200) {
@@ -245,36 +366,72 @@ var game = (function(){
     Scalable(this);
     Renderable(this);
     Physicsable(this);
-    this.pos.z = 1;
-    this.colors = ['red','blue','gold','green'];
-    this.coneAnimate = this.el.querySelector('.cone-animate');
-    this.coneAnimate.classList.add('fall'+(Math.ceil(rand(0,3))));
 
-    this.setRandomColor = function () {
-      var color = this.colors[Math.floor(rand(0,4))];
-      this.setColor(color);
+    this.setHidden = function (n) {
+      if (n) {
+        this.el.classList.add('hide');
+      } else {
+        this.el.classList.remove('hide');
+      }
+      _isHidden = n;
+      return this;
+    };
+    this.isHidden = function () {
+      return _isHidden;
     };
 
     this.setColor = function (color) {
-      this.el.className = 'cone';
+      this.color = color;
+      this.el.classList.remove('cone-blue');
+      this.el.classList.remove('cone-red');
+      this.el.classList.remove('cone-gold');
+      this.el.classList.remove('cone-green');
       this.el.classList.add('cone-' + color);
+      return this;
+    };
+
+    this.reset = function () {
+      this.isHit = false;
+      this.el.classList.remove('cone-fall');
+      return this;
     };
 
     this.update = function () {
-      var isHitX = this.pos.x > _player.pos.x - 5 && this.pos.x < _player.pos.x + 45,
+      var isHitX = this.pos.x > _player.pos.x - 20 && this.pos.x < _player.pos.x + 35,
           isHitY = this.pos.y + 30 < _player.pos.y && this.pos.y + 60 > _player.pos.y,
-          isHit = isHitX && isHitY;
+          isHit = isHitX && isHitY && !_isHidden;
 
       if (isHit) {
         if (!this.el.classList.contains('cone-fall')) {
           this.rotation.z = rand(0,40);
-          body.trigger(new CustomEvent('hit-cone'));
+          body.trigger(new CustomEvent('hit-cone',{detail: {cone:this}}));
         }
-
         this.el.classList.add('cone-fall');
+        this.isHit = true;
       }
+
+      if (this.pos.y > _player.pos.y && !this.isHit) {
+        _level.numCombo = 0;
+
+        if ($('.combo-counter-animate').classList.contains('show')) {
+          delay(function() {
+            $('.combo-counter-animate').classList.remove('show');
+          },200);
+        }
+      }
+
       return this;
     };
+
+
+    var _isHidden = false;
+    this.el.classList.add('cone');
+    this.pos.z = 1;
+
+    this.coneAnimate = this.el.querySelector('.cone-animate');
+    this.coneAnimate.classList.add('fall'+(Math.ceil(rand(0,3))));
+
+    this.setColor(color || 'blue');
   }
 
   function Shadow (shadowType,target, options) {
@@ -286,15 +443,6 @@ var game = (function(){
     Scalable(this);
     Renderable(this);
 
-    this.el = document.createElement('div');
-    this.el.classList.add('shadow');
-    this.el.classList.add(shadowType);
-
-    this.el.style.width = toInt(this.target.el.style.width) + this.options.padding * 2 + 'px';
-    this.el.style.height = toInt(this.target.el.style.height) + this.options.padding * 2 + 'px';
-
-    this.pos.z = 2;
-
     this.update = function () {
       this.pos.x = this.target.pos.x - this.options.padding;
       this.pos.y = this.target.pos.y - this.options.padding;
@@ -303,6 +451,14 @@ var game = (function(){
       this.rotation.z = this.target.rotation.z;
       return this;
     };
+
+    this.el = el('div');
+    this.el.classList.add('shadow');
+    this.el.classList.add(shadowType);
+    this.el.style.width = toInt(this.target.el.style.width) + this.options.padding * 2 + 'px';
+    this.el.style.height = toInt(this.target.el.style.height) + this.options.padding * 2 + 'px';
+    this.pos.z = 2;
+
     return this;
   }
   Shadow.prototype.defaults = {
@@ -360,21 +516,22 @@ var game = (function(){
     this.el.style.width = this.width + 'px';
     this.el.style.height = this.height + 'px';
 
+    this.boost = function () {
+      return Math.floor(_level.numCombo / 1);
+    };
+
     this.update = function () {
-      if (this.vel) {
-
-        //--- TURN
-        var rz =  this.rotation.z;
-        rz = rz >  this.maxTurnAngle ?  this.maxTurnAngle : rz;
-        rz = rz < -this.maxTurnAngle ? -this.maxTurnAngle : rz;
-        this.rotation.z = rz;
+      //--- TURN
+      var rz =  this.rotation.z;
+      rz = rz >  this.maxTurnAngle ?  this.maxTurnAngle : rz;
+      rz = rz < -this.maxTurnAngle ? -this.maxTurnAngle : rz;
+      this.rotation.z = rz;
 
 
-        // derive vel from turning angle
-        this.vel.x = -this.speed * this.rotation.z / 90;
-        // increment pos
-        this.pos.x -= this.vel.x;
-      }
+      // derive vel from turning angle
+      this.vel.x = -this.speed * this.rotation.z / 90;
+      // increment pos
+      this.pos.x -= this.vel.x;
       return this;
     };
 
@@ -508,12 +665,17 @@ var game = (function(){
     this.gridSize = 160;
     this.cones = [];
     this.conesPassed = 0;
-    this.patterns = [
-      function (n) {
-        n = n%60;
-        return 150 * Math.sin(n/20 * PI*2) + _level.width *0.5;
-      }
-    ];
+    this.guardOffset = -10;
+    this.numConesHit = 0;
+    this.numCombo = 0;
+    this.coneColors = [];
+    this.score = 0;
+    this.timer = $('#timer');
+    this.completedTime = $('#completed-time');
+    this.startTime = 0;
+    this.endTime = 0;
+    this.offsetTime = 0;
+    this.patterns = [makeWavePattern(0.5, 70, 10, 1)];
 
     this.el.style.width = this.width + 'px';
     this.el.style.height = this.height + 'px';
@@ -524,15 +686,24 @@ var game = (function(){
     Positionable(this.road);
 
     this.setOptions = function (options) {
-      this.name = '';
-      if (options.numOfCones) this.numOfCones = options.numOfCones;
-      if (options.topColor) this.topColor = options.topColor;
-      if (options.botColor) this.botColor = options.botColor;
-      if (options.speed) _player.speed = options.speed;
-      this.createCones();
+      for(var i in options) {
+        this[i] = options[i];
+      }
       this.changeBg(this.topColor, this.botColor);
+      this.restart();
     };
 
+    this.setScore = function (score) {
+      this.score = score;
+      $('.progress-fill').style.width = this.percentComplete() + '%';
+    };
+
+    this.pause = function () {
+      this.pauseStartTime = time();
+    };
+    this.unpause = function () {
+      this.offsetTime += time() - this.pauseStartTime;
+    };
     this.changeBg = function (topColor, botColor) {
       $('.bg-gradient').style.background = linearGradient(topColor,botColor);
       $('.bg-gradient').classList.add('show');
@@ -541,16 +712,43 @@ var game = (function(){
         $('.bg-gradient').classList.remove('show');
       }, 2000, this);
     };
+    this.restart = function () {
+      this.setScore(0);
+      this.numConesHit = 0;
+      this.destroyCones();
+      this.startTime = 0;
+      this.endTime = 0;
+      this.offsetTime = 0;
+      this.numCombo = 0;
+      this.isFinished = false;
 
+      $('.combo-counter-animate').classList.remove('show');
+      this.start();
+    };
+    this.start = function () {
+      this.createCones();
+      this.startTime = time();
+      this.pauseStartTime = 0;
+    };
+    this.elapsedTime = function () {
+      var ms = Math.floor((this.endTime - this.startTime - this.offsetTime) * 0.1);
+      return (ms * 0.01).toFixed(2);
+    };
+    this.percentComplete = function () {
+      return this.score / this.scoreToWin * 100;
+    };
+    this.isBestTime = function (lvlIndex, newTime) {
+      var old = parseFloat(retreive('lvl'+lvlIndex+'time')) || Number.MAX_VALUE;
+      return newTime < old;
+    };
     this.createCones = function () {
       var cone;
 
-      for (var i = 0; i < this.numOfCones; i++) {
-        cone = new Cone();
-        cone.setRandomColor();
-        cone.pos.x = rand(50, this.width - 50);
-        // cone.pos.y = rand(50, this.height - 50);
-        cone.pos.y = i/this.numOfCones * this.height;
+      for (var i = 0; i < this.numCones; i++) {
+        cone = new Cone(this.getRandomConeColor());
+        cone.setHidden(true);
+        cone.pos.x = rand(20, this.width - 20);
+        cone.pos.y = i/this.numCones * this.height;
 
         this.add(cone,'children');
         this.cones.push(cone);
@@ -565,30 +763,82 @@ var game = (function(){
         this.cones.pop();
       }
     };
+
+    this.getRandomConeColor = function () {
+      var n = Math.floor(rand(0,this.coneColors.length)),
+        color = this.coneColors[n];
+
+      if (rand(0,1) < this.bonusConeRatio) {
+        color = 'gold';
+      }
+      return color;
+    };
+
+    this.finished = function () {
+      var userTime,
+          i = game.levelIndex;
+
+      this.isFinished = true;
+      this.destroyCones();
+      delay(function () {
+        setView('complete-view');
+      },1000);
+      this.endTime = time();
+      userTime = this.elapsedTime();
+      this.completedTime.innerText = userTime;
+
+      if (this.isBestTime(i, userTime)) {
+        // best time
+        $('.complete-view').classList.add('best-time');
+        save('lvl' + i + 'time',userTime);
+        $('.level-time')[i].innerText = userTime;
+      } else {
+        $('.complete-view').classList.remove('best-time');
+      }
+
+    };
     this.update = function () {
-      var levelSpeed = _player.speed - Math.abs(_player.vel.x);
+      if (!this.isFinished) this.endTime = time();
+      this.timer.innerHTML = this.elapsedTime();
+
+      var levelSpeed = this.speed + _player.boost() - Math.abs(_player.vel.x);
       this.road.pos.y -= levelSpeed;
       this.road.pos.y = this.road.pos.y < -this.gridSize ? this.road.pos.y%this.gridSize : this.road.pos.y;
       this.road.el.style.transform = 'translateY(' + -this.road.pos.y + 'px) translateZ(0px)';
 
-      //--- TURN LEVEL
+      // shift level
       this.pos.x = -this.width * 0.5;
       this.pos.z = this.offsetZ;
+
+      // cone loop
       this.cones.forEach(function (cone, index) {
         cone.pos.y += levelSpeed;
 
         // reset cone position
         if (cone.pos.y > _level.height) {
-          cone.pos.y = 50;
-          // cone.pos.x = rand(0,_level.width-50);
+          cone
+            .setHidden(false)
+            .reset(false);
+
+          cone.pos.y = 0;
           cone.pos.x = _level.patterns[0](_level.conesPassed);
           cone.rotation.z = 0;
-          cone.setRandomColor();
+          cone.setColor( _level.getRandomConeColor() );
           _level.conesPassed++;
         }
       });
+      // end cone loop
+
+      var maxPlayerX = this.width + this.guardOffset - _player.width * 0.5;
+      if ( _player.pos.x < -this.guardOffset ) {
+        _player.pos.x = -this.guardOffset;
+      } else if ( _player.pos.x > maxPlayerX ) {
+        _player.pos.x = maxPlayerX;
+      }
+
       return this;
     };
+
     this.setOptions(options);
     return this;
   }
@@ -597,6 +847,63 @@ var game = (function(){
   function step (timestamp) {
     _requestId = requestAnimationFrame(step);
     onStep();
+  }
+
+  function setView (view, isRestart) {
+    var views = ['title-view', 'instructions-view', 'level-select-view', 'pause-view', 'hud-view','complete-view'],
+        isPause = view === 'pause-view',
+        isHud = view === 'hud-view';
+
+    // hide all views
+    views.forEach(function (v, index) {
+      if (view !== v && !(v==='hud-view' && isPause)) {
+        $('.' + v).classList.add('exitOutDown');
+        $('.' + v).classList.remove('bounceInDown');
+      }
+    });
+    delay(function(){
+      views.forEach(function (v, index) {
+        if (view !== v && !(v==='hud-view' && isPause)) {
+          $('.' + v).classList.remove('exitOutDown','animated');
+        }
+      });
+    },800);
+
+    // show this view
+    $('.' + view).classList.add('animated', 'bounceInDown');
+
+    if (view==='pause-view') {
+      _camera.set360View(true);
+      clearInterval(this.pauseInterval);
+      _level.pause();
+      this.pauseInterval = setInterval(function () {
+        _camera
+          .update()
+          .render();
+      },10);
+      game.pause();
+    }
+
+    if (view==='hud-view') {
+      _camera.set360View(false);
+
+      if (this.prevView==='pause-view') {
+        delay(function(){
+          if (!isRestart) _level.unpause();
+          game.start();
+        },1000);
+      }
+    }
+
+    if (view==='complete-view') {
+      if (game.levelIndex >= _levels.length - 1) {
+        $('.btn-next-level').classList.add('hide');
+      } else {
+        $('.btn-next-level').classList.remove('hide');
+      }
+    }
+
+    this.prevView = view;
   }
 
   return {
@@ -622,63 +929,32 @@ var game = (function(){
       return this;
     },
     setLevel: function (num) {
+      game.levelIndex = num;
+      _camera.set360View(false);
       _level.setOptions(_levels[num]);
+      return this;
     },
-    show: function (view,levelNum) {
-      if (view=='level-select') {
-        $('.title-view').classList.add('exitOutDown');
-        $('.title-view').classList.remove('bounceInDown');
-        delay(function(){
-          $('.title-view').classList.remove('exitOutDown','animated');
-        },1000);
-        $('.level-select-view').classList.add('animated', 'bounceInDown');
-      }
+    nextLevel: function () {
+      var lvlIndex = game.levelIndex + 1;
+      game
+        .setLevel(lvlIndex)
+        .start();
+      setView('hud-view');
+      _level.restart();
 
-      if (view=='gameplay') {
-        // $('.title-view').classList.add('bounceInDown');
-        $('.level-select-view').classList.add('exitOutDown');
-        $('.level-select-view').classList.remove('bounceInDown');
-        delay(function(){
-          $('.level-select-view').classList.remove('exitOutDown','animated');
-        },1000);
-
-        if (this.state==='pause') {
-          _camera.set360View(false);
-          $('.pause-view').classList.add('exitOutDown');
-          $('.pause-view').classList.remove('bounceInDown');
-          delay(function(){
-            $('.pause-view').classList.remove('exitOutDown','animated');
-            game.start();
-          },1000);
-        }
-
-        $('.hud-view').classList.add('animated', 'bounceInDown');
-
-        _camera.set360View(false);
-        clearInterval(this.pauseInterval);
-        delay(function (){
-          this.setLevel(levelNum);
-          game.start();
-        },1000,this);
-      }
-
-      if (view=='pause') {
-        _camera.set360View(true);
-        this.pauseInterval = setInterval(function () {
-          _camera
-            .update()
-            .render();
-        },10);
-
-        $('.hud-view').classList.add('exitOutUp');
-        $('.hud-view').classList.remove('bounceInDown');
-        delay(function(){
-          $('.hud-view').classList.remove('exitOutUp','animated');
-        },1000);
-        this.pause();
-        $('.pause-view').classList.add('animated', 'bounceInDown');
-      }
-      this.state = view;
+      return this;
+    },
+    restartLevel: function () {
+      setView('hud-view', true);
+      _level.restart();
+    },
+    exit: function () {
+      setView('title-view');
+      _level.destroyCones();
+      game.start();
+    },
+    setView: function (view) {
+      setView(view);
     }
   };
 
@@ -688,7 +964,7 @@ var game = (function(){
    */
 
   function Templatable (o,templateName) {
-    o.el = document.createElement('div');
+    o.el = el('div');
     o.el.classList.add(templateName);
     o.el.appendChild(_templates[templateName].content.cloneNode(true));
   }
@@ -729,30 +1005,16 @@ var game = (function(){
       y: 0,
       z: 0
     };
-    o.moveTo = function (x,y,z) {
-      o.pos.x = x || o.pos.x;
-      o.pos.y = y || o.pos.y;
-      o.pos.z = z || o.pos.z;
-      return o;
-    };
   }
 
   function Physicsable (o,minVel,maxVel) {
     o.minVel = minVel || -250;
     o.maxVel = maxVel || 250;
 
-    o.friction = 0.9;
-
     o.vel = {
       x: 0,
       y: 0,
       z: 0
-    };
-    o.setVelocity = function (x,y,z) {
-      o.vel.x = x || o.pos.x;
-      o.vel.y = y || o.pos.y;
-      o.vel.z = z || o.pos.z;
-      return o;
     };
   }
 
@@ -762,12 +1024,6 @@ var game = (function(){
       y: 1,
       z: 1
     };
-    o.scaleTo = function (x,y,z) {
-      o.scale.x = x || o.scale.x;
-      o.scale.y = y || o.scale.y;
-      o.scale.z = z || o.scale.z;
-      return o;
-    };
   }
 
   function Rotatable (o) {
@@ -775,12 +1031,6 @@ var game = (function(){
       x: 0,
       y: 0,
       z: 0
-    };
-    o.rotateTo = function (x,y,z) {
-      o.rotation.x = x || o.rotation.x;
-      o.rotation.y = y || o.rotation.y;
-      o.rotation.z = z || o.rotation.z;
-      return o;
     };
   }
 
@@ -805,7 +1055,6 @@ var game = (function(){
         z: o.rotation.z,
       };
 
-      // o.el.style.transform = new Matrix().rotate(r.x, 0, 0).rotate(0, r.y, 0).rotate(0, 0, r.z).scale(s.x, s.y, s.z).translate(p.x, p.y, p.z)
       o.el.style.transform = 'translate3d(' + p.x + 'px, ' + p.y + 'px, ' + p.z + 'px) ' +
                               'scale3d(' + s.x + ', ' + s.y + ', ' + s.z + ') ' +
                               'rotateX(' + r.x + 'deg) ' +
@@ -821,7 +1070,7 @@ var game = (function(){
    *  UTILS
    */
 
-  function Sound(type, amt) {
+  function Sound(type, amt, accent) {
     var C4 = 261.626,
         E4 = 329.628,
         A3 = 220,
@@ -832,41 +1081,53 @@ var game = (function(){
         G4 = 391.995,
         B3 = 246.942,
         song  = [C4,C4,E4,E4,A3,A3,C4,C4,D4,D4,F4,F4,G3,G3,B3,B3],
-        song2 = [E4,E4,G4,G4,C4,C4,E4,E4,F4,F4,A4,A4,B3,B3,D4,D4],
+        // song2 = [E4,E4,G4,G4,C4,C4,E4,E4,F4,F4,A4,A4,B3,B3,D4,D4],
         songLen = song.length;
+        // types = ['sine','square','sawtooth','triangle'];
 
-    play(song);
-    // play(song2);
+    play(song, type);
 
-    function play (song) {
+    function play (song, type) {
       var osc = audioCtx.createOscillator(),
-        gain = audioCtx.createGain();
+        gainNode = audioCtx.createGain();
 
-      osc.type = 'square';
+      osc.type = type;
       osc.frequency.value = song[amt%songLen];
-      osc.connect(audioCtx.destination);
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      gainNode.gain.value = accent? 0.7 : 0.5;
+
       osc.start(0);
-      window.osc = osc;
 
       setTimeout(function () {
         osc.stop(0);
       },600);
     }
   }
+  function makeWavePattern (ampMulti, conesPerWave, len, dir) {
+    return function (n) {
+      // ampMulti => width of wave
+      // len => stretch out wave
 
-
+      var amp = dir*(n%conesPerWave);
+      return ampMulti * _level.width * 0.5 * Math.sin(amp/len * PI*2) + _level.width *0.5;
+    }
+  }
+  function save (key,val) {
+    store.setItem(key,val);
+  }
+  function retreive(key) {
+    return store.getItem(key);
+  }
+  function el (tag) {
+    return document.createElement(tag);
+  }
   function linearGradient (topColor,botColor) {
     return 'linear-gradient(180deg, ' + topColor + ' 0%, ' + botColor + ' 100%)';
   }
   function delay (callback, time, context) {
     context = !context ? this : context;
-    setTimeout((callback).bind(context),time);
-  }
-  function Tween (obj) {
-    this.obj = obj;
-    this.to = function () {
-      return this;
-    };
+    return setTimeout((callback).bind(context),time);
   }
 
   function Ease (easeType) {
@@ -889,18 +1150,7 @@ var game = (function(){
   function time() {
     return new Date().getTime();
   }
-
-  function deg2rad (deg) {
-    return deg * (PI/180);
-  }
-
-  function rad2deg (rad) {
-    return rad * (180/PI);
-  }
   function rand (min,max) {
     return Math.random() * (max - min) + min;
-  }
-  function randInt (min,max) {
-    return Math.floor(rand(min,max));
   }
 })();
