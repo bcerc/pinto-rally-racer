@@ -24,6 +24,9 @@ module.exports = function(grunt) {
     copy: {
       game: {
         files: [{ cwd: 'src/', flatten: true, expand: true, src: ['index.html','game.css','game.js', 'pinto.svg', 'icons.svg'], dest: 'game/', filter: 'isFile'}]
+      },
+      ghpages: {
+        files: [{ cwd: 'game/', flatten: true, expand: true, src: ['*'], dest: '../pinto-gh-page/pinto-rally-racer/', filter: 'isFile'}]
       }
     },
     uglify: {

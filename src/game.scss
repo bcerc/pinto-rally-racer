@@ -19,7 +19,7 @@ $road_grid_color: rgba(255,255,255,.3);
 $road_grid_line_width: 2px;
 $road_grid_size: 162px;
 
-$btn_color: transparent;
+$btn_color: rgba(255,255,255,.4);
 $primary_color: #3CD3AD;
 
 $default_camera_view:
@@ -28,7 +28,6 @@ $default_camera_view:
 
 @import "icons";
 @import "animations";
-
 body {
   padding: 0;
   margin: 0;
@@ -36,6 +35,22 @@ body {
   overflow: hidden;
   font-family: "Futura", "Helvetica Nueue", sans-serif;
   color: #fff;
+  -webkit-user-select: none;
+  cursor: default;
+}
+ul {
+  text-align: left;
+  text-transform: none;
+  font-size: 24px;
+  background: rgba(255,255,255,.3);
+  padding: 15px 15px 15px 50px;
+}
+li {
+  margin: 10px 0;
+}
+em {
+  color: $primary_color;
+  text-shadow: 1px 1px 0 rgba(0,0,0,.2);
 }
 .bg-gradient {
   position: absolute;
@@ -50,6 +65,9 @@ body {
     opacity: 1;
   }
 }
+.hide {
+  display: none !important;
+}
 button {
   display: inline-block;
   position: relative;
@@ -59,22 +77,19 @@ button {
   box-sizing: border-box;
   font-size: 20px;
   padding: 10px;
-  border: solid 1px #FFFFFF;
-  // text-shadow: 1px 0 0 rgba(0,0,0,.2);
-  // box-shadow: 1px 1px 0 1px rgba(0,0,0,.2);
   color: #fff;
+  cursor: pointer;
+  text-shadow: 1px 1px 0 rgba(0,0,0,.1);
   &:hover {
-    background-color: rgba(255,255,255,.1);
+    background-color: rgba(255,255,255,.3);
   }
   &:active {
     outline: 0;
-    border: solid 1px $primary_color;
-    box-shadow: 0 0 0 2px $primary_color;
+    box-shadow: 0 0 0 2px $primary_color inset;
   }
   &:focus {
     outline: 0;
-    border: solid 1px $primary_color;
-    box-shadow: 0 0 0 2px $primary_color;
+    box-shadow: 0 0 0 2px $primary_color inset;
   }
 }
 .btn-primary {
@@ -199,10 +214,10 @@ $car_chrome_color: #aaa;
 
 @-webkit-keyframes carRunning {
   0% {
-    transform: scale3d(1,1,.95);
+    transform: scale3d(1,1,.85);
   }
   100% {
-    transform: scale3d(1,1,1);
+    transform: scale3d(1,1,.9);
   }
 }
 
@@ -243,11 +258,39 @@ $car_chrome_color: #aaa;
     transform: translateZ(23px) rotateX(6deg);
     height: 34px;
     background-color: darken($car_color,8%);
+    &::before {
+      content: '13';
+      color: rgba(0,0,0,.3);
+      transform-style: preserve-3d;
+      position: absolute;
+      bottom: 6px;
+      left: -6px;
+      z-index: 2;
+      width: 100%;
+      height: 22px;
+      display: block;
+      transform: translateZ(3.2px) rotateY(180deg) rotateX(180deg);
+    }
   }
   .body-front {
     transform: translateY(-3.4px) translateZ(17.5px) rotateX(90deg);
     height: 8px;
-    background-color: darken($car_color,18%);
+    background-color: #6A9264;
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 1px;
+      left: 1px;
+      display: block;
+      background-color: #EFECE0;
+      width: 17%;
+      height: 80%;
+    }
+    &::after {
+      left: auto;
+      right: 1px;
+    }
   }
 
   .body-back {
@@ -610,34 +653,76 @@ $cone_color_green: #ABC78D;
   justify-content: center;
 }
 .hud-view {
-  .icon-pause {
+  * {
     position: absolute;
+  }
+  .icon-pause {
     top: 3%;
     right: 3%;
   }
-  .combo-meter {
+  .progress {
     width: 40%;
     height: 24px;
     border: solid 1px #fff;
-    position: absolute;
     top: 3%;
     left: 50%;
     margin: 10px -20%;
     overflow: hidden;
   }
-  .combo-meter-fill {
+  .progress-fill {
     width: 0%;
     height: 100%;
     background: $primary_color;
     transition: width .3s;
   }
 }
+.combo-counter-animate {
+  top: 10%;
+
+  width: 400px;
+  margin: 0 -200px;
+  transition: transform .4s;
+  transform: translateY(-200px);
+
+  &.show {
+    transform: translateY(0);
+  }
+}
+.combo-counter {
+  width: 100%;
+  -webkit-animation-duration: .7s;
+  -webkit-animation-fill-mode: forwards;
+  -webkit-animation-iteration-count: infinite;
+  font-size: 60px;
+  text-align: center;
+  &::before,
+  &::after {
+    font-size: 14px;
+  }
+  &::before {
+    content: 'x';
+    font-size: 28px;
+  }
+  &::after {
+    font-size: 20px;
+    content: 'COMBO!';
+    position: relative;
+    top: -10px;
+    left: 10px;
+  }
+}
+.timer {
+  top: 3%;
+  left: 3%;
+  font-size: 42px;
+  margin: -6px 0;
+}
 .view {
   article {
     text-transform: uppercase;
-    border: solid 1px #fff;
+    // border: solid 1px #fff;
+    // background: rgba(255,255,255,.2);
     text-align: center;
-    background: rgba(255,255,255,.5);
     font-weight: 600;
     padding: 40px;
   }
@@ -647,7 +732,7 @@ $cone_color_green: #ABC78D;
   margin: 0 0 0;
   font-size: 0;
   max-width: 644px;
-  > * {
+  > button {
     text-transform: uppercase;
     font-weight: bold;
     background-size: 300px;
@@ -656,15 +741,91 @@ $cone_color_green: #ABC78D;
     display: inline-block;
     width: 150px;
     height: 150px;
-    border: solid 1px #fff;
-    transition: all .15s;
-    &.active,
-    &:active,
+    box-shadow: 0 0 0 1px rgba(0,0,0,.2);
+
+    &:hover,
     &:focus {
-      box-shadow:
-        0 0 0 2px #fff inset,
-        0 0 0 2px $primary_color;;
+      box-shadow: 0 0 0 2px #fff;
     }
+  }
+}
+.pause-view,
+.complete-view {
+  button {
+    display: block;
+    width: 180px;
+    margin: 3px auto;
+  }
+}
+.complete-view {
+  &.best-time {
+    .completed-time {
+      &::after {
+        position: absolute;
+        content: 'BEST TIME!!';
+        font-size: 14px;
+        background: $primary_color;
+        padding: 4px 6px;
+        margin: 12px;
+        white-space: nowrap;
+        -webkit-animation-name: tada;
+        -webkit-animation-duration: 1s;
+        -webkit-animation-fill-mode: both;
+        -webkit-animation-iteration-count: infinite;
+      }
+    }
+  }
+}
+.level-rating {
+  pointer-events: none;
+  min-height: 24px;
+  margin-top: 5px;
+  > * {
+    display: inline-block;
+    font-size: 24px;
+  }
+  .icon-star::before {
+    color: $primary_color;
+    text-shadow:
+      1px 0 0 #fff,
+      1px 1px 0 #fff,
+      0 1px 0 #fff,
+      -1px 1px 0 #fff,
+      1px -1px 0 #fff,
+      -1px -1px 0 #fff,
+      -1px 0 0 #fff,
+      0 -1px 0 #fff;
+  }
+  .icon-star-empty {
+    color: rgba(255,255,255,.7);
+  }
+}
+.level-time {
+  position: relative;
+  margin: 5px 0 0;
+  font-size: 28px;
+  padding: 0 0 4px;
+  background: rgba(255,255,255,.2);
+  pointer-events: none;
+  &::after {
+    content: 'Record';
+    display: block;
+    font-size: 10px;
+    color: rgba(255,255,255,.7);
+  }
+}
+.completed-time {
+  font-size: 38px;
+  position: relative;
+  &::before {
+    position: absolute;
+    display: block;
+    width: 100%;
+    top: -16px;
+    text-align: center;
+    content: 'YOUR TIME';
+    font-size: 14px;
+    color: $primary_color;
   }
 }
 kbd {

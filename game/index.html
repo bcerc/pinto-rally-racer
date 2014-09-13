@@ -16,7 +16,7 @@
             <h1>
               Super Pinto Rally Racer
             </h1>
-            <button class='btn-primary' onclick="javascript:game.show('level-select')">
+            <button class='btn-primary' onclick="javascript:game.setView('instructions-view')">
               PLAY!
             </button>
             <section class='directions'>
@@ -33,38 +33,89 @@
         </div>
       </div>
 
+      <div class='view instructions-view'>
+        <div class='view-content'>
+          <article>
+            <h1>
+              INSTRUCTIONS
+            </h1>
+            <ul>
+              <li>Hit <em>ALL</em> the cones!</li>
+              <li>Gold cones are worth <em>x4</em> points</li>
+              <li><em>BIGGER</em> combos = extra speed</li>
+            </ul>
+            <button class='btn-primary' onclick="javascript:game.setView('level-select-view')">
+              CONTINUE
+            </button>
+          </article>
+        </div>
+      </div>
+
       <div class='view level-select-view'>
         <div class='view-content'>
           <article>
-            <h4>
+            <h1>
               PICK A LEVEL
-            </h4>
+            </h1>
             <div class='levels'></div>
           </article>
+        </div>
+      </div>
+
+      <div class='view hud-view'>
+        <div class='view-content'>
+          <button onclick="javascript:game.setView('pause-view')" class='icon-pause'></button>
+          <div class='progress'>
+            <div class='progress-fill'></div>
+          </div>
+          <div class='combo-counter-animate'>
+            <div class='combo-counter bounce'>0</div>
+          </div>
+          <div id="timer" class='timer'>0:00</div>
         </div>
       </div>
 
       <div class='view pause-view'>
         <div class='view-content'>
           <article>
-            <h4>
-              PAUSED
-            </h4>
-            <button class='btn-primary' onclick="javascript:game.show('gameplay')">
+            <button class='btn-primary' onclick="javascript:game.setView('hud-view')">
               RESUME
             </button>
-
+            <button onclick="javascript:game.restartLevel()">
+              RESTART
+            </button>
+            <button onclick="javascript:game.setView('level-select-view')">
+              LEVEL SELECT
+            </button>
+            <button onclick="javascript:game.exit()">
+              EXIT
+            </button>
           </article>
         </div>
       </div>
 
-
-      <div class='view hud-view'>
+      <div class='view complete-view'>
         <div class='view-content'>
-          <button onclick="javascript:game.show('pause')" class='icon-pause'></button>
-          <div class='combo-meter'>
-            <div class='combo-meter-fill'></div>
-          </div>
+          <article>
+            <h1>
+              WOOHOO! YOU MADE IT!
+            </h1>
+            <div id='completed-rating' class='completed-rating'>
+            </div>
+            <h1 id='completed-time' class="completed-time"></h1>
+            <button class='btn-primary btn-next-level' onclick="javascript:game.nextLevel()">
+              NEXT LEVEL
+            </button>
+            <button onclick="javascript:game.restartLevel()">
+              RESTART
+            </button>
+            <button onclick="javascript:game.setView('level-select-view')">
+              LEVEL SELECT
+            </button>
+            <button onclick="javascript:game.exit()">
+              EXIT
+            </button>
+          </article>
         </div>
       </div>
     </div>
