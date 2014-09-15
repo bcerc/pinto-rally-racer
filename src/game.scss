@@ -809,17 +809,35 @@ $cone_color_green: #ABC78D;
     }
   }
 }
-.level-time {
+.level-title {
+  // border-bottom: solid 1px rgba(255,255,255,.3);
+  background-color: rgba(255,255,255,.2);
+  padding: 4px;
+  margin: -5px 0 15px;
+}
+.level-time,
+.level-combo {
   position: relative;
   margin: 5px 0 0;
-  font-size: 28px;
+  font-size: 18px;
   padding: 0 0 4px;
-  background: rgba(255,255,255,.2);
+  // border: solid 1px rgba(255,255,255,.3);
   pointer-events: none;
   &::after {
-    content: 'Record';
+    content: 'BEST TIME';
     display: block;
-    font-size: 10px;
+    font-size: 9px;
+    font-weight: 100;
+    color: rgba(255,255,255,.7);
+  }
+}
+.level-combo {
+  // display: none;
+  &::after {
+    content: 'BEST COMBO';
+    display: block;
+    font-size: 9px;
+    font-weight: 100;
     color: rgba(255,255,255,.7);
   }
 }

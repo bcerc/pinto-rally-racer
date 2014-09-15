@@ -769,18 +769,32 @@ button {
   -webkit-animation-fill-mode: both;
   -webkit-animation-iteration-count: infinite; }
 
-.level-time {
+.level-title {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 4px;
+  margin: -5px 0 15px; }
+
+.level-time,
+.level-combo {
   position: relative;
   margin: 5px 0 0;
-  font-size: 28px;
+  font-size: 18px;
   padding: 0 0 4px;
-  background: rgba(255, 255, 255, 0.2);
   pointer-events: none; }
-  .level-time::after {
-    content: 'Record';
+  .level-time::after,
+  .level-combo::after {
+    content: 'BEST TIME';
     display: block;
-    font-size: 10px;
+    font-size: 9px;
+    font-weight: 100;
     color: rgba(255, 255, 255, 0.7); }
+
+.level-combo::after {
+  content: 'BEST COMBO';
+  display: block;
+  font-size: 9px;
+  font-weight: 100;
+  color: rgba(255, 255, 255, 0.7); }
 
 .completed-time {
   font-size: 38px;
