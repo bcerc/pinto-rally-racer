@@ -24,13 +24,6 @@ var game = (function(){
   var _container = $('.game-container'),
       _canvas = $('#game-canvas'),
       _camera = new Camera($('#game-camera')),
-      _templates = {
-        car: $('#car-template'),
-        level: $('#level-template'),
-        wheel: $('#wheel-template'),
-        cone: $('#cone-template'),
-        pintoSide: $('#pinto-side-template')
-      },
       _cameraPerspective = 500,
       _hasInit = false,
       _isPaused = true,
@@ -43,12 +36,12 @@ var game = (function(){
 
       _levels = [
       {
+        id: 0,
         name: 'Twin Peaks',
         numCones: 4,
         coneColors: ['blue'],
         bonusConeRatio: 0.2,
         scoreToWin: 50,
-        userTime: retreive('lvl0time') || '0.00',
         speed: 18,
         topColor: '#1D2B64',
         botColor: '#F8CDDA',
@@ -57,12 +50,12 @@ var game = (function(){
           makeWavePattern(0.5, 70, 10, 1)
         ]
       },{
+        id: 1,
         name: 'Stinson',
         numCones: 8,
         coneColors: ['blue'],
         bonusConeRatio: 0.1,
         scoreToWin: 70,
-        userTime: retreive('lvl1time') || '0.00',
         speed: 24,
         topColor: '#4CB8C4',
         botColor: '#3CD3AD',
@@ -70,12 +63,12 @@ var game = (function(){
           makeWavePattern(0.15, 40, 70, 1)
         ]
       },{
+        id: 2,
         name: 'Big Basin',
         numCones: 6,
         coneColors: ['green'],
         bonusConeRatio: 0.3,
         scoreToWin: 100,
-        userTime: retreive('lvl2time') || '0.00',
         speed: 24,
         topColor: '#16222A',
         botColor: '#3A6073',
@@ -83,12 +76,12 @@ var game = (function(){
           makeWavePattern(0.3, 120, 10, 1)
         ]
       },{
+        id: 3,
         name: 'Alcatraz',
         numCones: 2,
         coneColors: ['red'],
         bonusConeRatio: 0.6,
         scoreToWin: 120,
-        userTime: retreive('lvl3time') || '0.00',
         speed: 14,
         topColor: '#1F1C2C',
         botColor: '#928DAB',
@@ -101,12 +94,12 @@ var game = (function(){
           }
         ]
       },{
+        id: 4,
         name: 'Ocean Beach',
         numCones: 14,
         coneColors: ['green'],
         bonusConeRatio: 0,
         scoreToWin: 10,
-        userTime: retreive('lvl4time') || '0.00',
         speed: 24,
         topColor: '#085078',
         botColor: '#85D8CE',
@@ -114,12 +107,12 @@ var game = (function(){
           makeWavePattern(0.5, 70, 10, 1)
         ]
       },{
+        id: 5,
         name: 'Muir Woods',
         numCones: 8,
         coneColors: ['green'],
         bonusConeRatio: 0.5,
         scoreToWin: 40,
-        userTime: retreive('lvl5time') || '0.00',
         speed: 22,
         topColor: '#134E5E',
         botColor: '#71B280',
@@ -127,12 +120,12 @@ var game = (function(){
           makeWavePattern(0.6, 70, 5, 1)
         ]
       },{
+        id: 6,
         name: 'San Quentin',
         numCones: 12,
         coneColors: ['red'],
         bonusConeRatio: 0.4,
         scoreToWin: 180,
-        userTime: retreive('lvl6time') || '0.00',
         speed: 24,
         topColor: '#C04848',
         botColor: '#480048',
@@ -145,18 +138,18 @@ var game = (function(){
           }
         ]
       },{
+        id: 7,
         name: 'The Abyss',
         numCones: 40,
         coneColors: ['red'],
         bonusConeRatio: 0.666,
         scoreToWin: 666,
-        userTime: retreive('lvl7time') || '0.00',
         speed: 46,
         topColor: '#000',
         botColor: '#000',
         patterns: [
           function (n) {
-            return rand(50, _level.width-50)
+            return rand(50, _level.width-50);
           }
         ]
       }
@@ -192,6 +185,10 @@ var game = (function(){
       if (_level.numCombo > 3) {
         $('.combo-counter').innerText = _level.numCombo;
         $('.combo-counter-animate').classList.add('show');
+
+        if (_level.userCombo < _level.numCombo) {
+          _level.userCombo = _level.numCombo;
+        }
       }
 
       if (cone && cone.color === 'gold') {
@@ -215,34 +212,11 @@ var game = (function(){
         lvlBtn,
         lvlRating,
         lvlTime,
-        star;
+        star,
+        btnContent;
 
     for (var i=0; i < _levels.length; i++) {
-      lvlData = _levels[i];
-      lvlBtn = el('button');
-      lvlBtn.innerText = lvlData.name;
-      // lvlRating = el('div');
-      // lvlRating.classList.add('level-rating');
-      // lvlBtn.appendChild(lvlRating);
-
-      // if (lvlData.rating !== undefined) {
-      //   for (var j=0; j < 3; j++) {
-      //     star = el('div');
-      //     if (j < lvlData.rating) {
-      //       star.classList.add('icon-star');
-      //     } else {
-      //       star.classList.add('icon-star-empty');
-      //     }
-      //     lvlRating.appendChild(star);
-      //   }
-      // }
-
-      lvlTime = el('div');
-      lvlTime.className = 'level-time';
-      lvlTime.innerText = lvlData.userTime;
-      lvlBtn.appendChild(lvlTime);
-
-      lvlBtn.style.backgroundImage = linearGradient(lvlData.topColor,lvlData.botColor);
+      lvlBtn = new LevelMenuItem(_levels[i]);
       $('.levels').appendChild(lvlBtn);
     }
     $('.levels').on('click', function (e) {
@@ -493,10 +467,10 @@ var game = (function(){
     this.bodyR = this.el.querySelector('.body-right');
     this.bodyRT = this.el.querySelector('.body-right-top');
 
-    this.wheels.fl.el.appendChild(_templates.wheel.content.cloneNode(true));
-    this.wheels.fr.el.appendChild(_templates.wheel.content.cloneNode(true));
-    this.wheels.rl.el.appendChild(_templates.wheel.content.cloneNode(true));
-    this.wheels.rr.el.appendChild(_templates.wheel.content.cloneNode(true));
+    this.wheels.fl.el.appendChild(new Template('wheel'));
+    this.wheels.fr.el.appendChild(new Template('wheel'));
+    this.wheels.rl.el.appendChild(new Template('wheel'));
+    this.wheels.rr.el.appendChild(new Template('wheel'));
 
     this.width = 33;
     this.height = 100;
@@ -787,6 +761,9 @@ var game = (function(){
       userTime = this.elapsedTime();
       this.completedTime.innerText = userTime;
 
+      save('lvl' + i + 'combo',_level.userCombo);
+      $('.level-combo')[i].innerText = _level.userCombo;
+
       if (this.isBestTime(i, userTime)) {
         // best time
         $('.complete-view').classList.add('best-time');
@@ -963,10 +940,14 @@ var game = (function(){
    *  DECORATORS
    */
 
+  function Template (name) {
+    return $('#' + name + '-template').content.cloneNode(true);
+  }
+
   function Templatable (o,templateName) {
     o.el = el('div');
     o.el.classList.add(templateName);
-    o.el.appendChild(_templates[templateName].content.cloneNode(true));
+    o.el.appendChild(new Template([templateName]));
   }
 
   function Collectable (o,type) {
@@ -997,6 +978,22 @@ var game = (function(){
         }
       }
     };
+  }
+
+  function LevelMenuItem (data) {
+    var lvlBtn = el('button'),
+        userTime = retreive('lvl' + data.id + 'time') || '0.00',
+        userCombo = retreive('lvl' + data.id + 'combo') || '0',
+        btnContent;
+
+    btnContent = new Template('level-menu-item');
+    btnContent.querySelector('.level-title').innerText = data.name;
+    btnContent.querySelector('.level-time').innerText = userTime;
+    btnContent.querySelector('.level-combo').innerText = userCombo;
+    data.userCombo = userCombo;
+    lvlBtn.appendChild(btnContent);
+    lvlBtn.style.backgroundImage = linearGradient(data.topColor,data.botColor);
+    return lvlBtn;
   }
 
   function Positionable (o) {
