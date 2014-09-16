@@ -1,8 +1,9 @@
 {
-  "title": "Boxcar Racer",
-  "name": "boxcar",
-  "description": "Game for JS13k",
+  "title": "Super Pinto Rally Racer",
+  "name": "pinto",
+  "description": "JS13k",
   "author": "Brian Cerceo",
+  "version": "0.9",
   "engines": {
     "node": ">= 0.10.0"
   },

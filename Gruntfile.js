@@ -16,14 +16,26 @@ module.exports = function(grunt) {
         banner: '<%= banner %>',
         stripBanners: true
       },
-      dist: {
-        src: ['src/<%= pkg.name %>.js','src/index.html','src/game.css'],
-        dest: ['game/<%= pkg.name %>.js','game/index.html','game/game.css']
-      }
+      js: {
+        src: [
+          'src/core/Util.js',
+          'src/core/Decorators.js',
+          'src/components/Audio.js',
+          'src/components/Camera.js',
+          'src/components/Cone.js',
+          'src/components/Level.js',
+          'src/components/LevelMenuItem.js',
+          'src/components/Player.js',
+          'src/components/PlayerController.js',
+          'src/components/Shadow.js',
+          'src/core/game.js'
+        ],
+        dest: 'src/main.js',
+      },
     },
     copy: {
       game: {
-        files: [{ cwd: 'src/', flatten: true, expand: true, src: ['index.html','game.css','game.js', 'pinto.svg'], dest: 'game/', filter: 'isFile'}]
+        files: [{ cwd: 'src/', flatten: true, expand: true, src: ['index.html','game.css','main.js', 'pinto.svg'], dest: 'game/', filter: 'isFile'}]
       },
       ghpages: {
         files: [{ cwd: 'game/', flatten: true, expand: true, src: ['*'], dest: '../pinto-gh-page/pinto-rally-racer/', filter: 'isFile'}]
@@ -36,7 +48,7 @@ module.exports = function(grunt) {
       },
       gameMin: {
         files: [{
-          'game-min/game.js': ['src/game.js']
+          'game-min/main.js': ['src/main.js']
         }]
       }
     },
@@ -131,7 +143,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-open');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'uglify', 'cssmin', 'htmlmin', 'copy', 'compress']);
+  grunt.registerTask('default', ['concat', 'jshint', 'uglify', 'cssmin', 'htmlmin', 'copy', 'compress']);
 
 
 
