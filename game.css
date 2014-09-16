@@ -346,32 +346,32 @@ button {
 
   100% {
     transform: scale3d(1, 1, 0.9); } }
-.car {
+.player {
   width: 33px;
   height: 33px;
   transform-style: preserve-3d; }
-  .car .body {
+  .player .body {
     transform-style: preserve-3d;
     width: 100%;
     height: 100px; }
-  .car .body-bottom {
+  .player .body-bottom {
     transform: translateY(27px) translateZ(8px);
     background-color: #AD9A9A;
     height: 44px; }
-  .car .body-top {
+  .player .body-top {
     transform: translateX(2px) translateY(48px) translateZ(39px);
     height: 28px;
     width: 29px;
     background-color: #b3e7ac; }
-  .car .body-front-windshield {
+  .player .body-front-windshield {
     transform-origin: 0 0;
     transform: translateY(34px) translateZ(25px) rotateX(45deg);
     height: 20px; }
-  .car .body-hood {
+  .player .body-hood {
     transform: translateZ(23px) rotateX(6deg);
     height: 34px;
     background-color: #96de8c; }
-    .car .body-hood::before {
+    .player .body-hood::before {
       content: '13';
       color: rgba(0, 0, 0, 0.3);
       transform-style: preserve-3d;
@@ -383,11 +383,11 @@ button {
       height: 22px;
       display: block;
       transform: translateZ(3.2px) rotateY(180deg) rotateX(180deg); }
-  .car .body-front {
+  .player .body-front {
     transform: translateY(-3.4px) translateZ(17.5px) rotateX(90deg);
     height: 8px;
     background-color: #6A9264; }
-    .car .body-front::before, .car .body-front::after {
+    .player .body-front::before, .player .body-front::after {
       content: '';
       position: absolute;
       bottom: 1px;
@@ -396,14 +396,14 @@ button {
       background-color: #EFECE0;
       width: 17%;
       height: 80%; }
-    .car .body-front::after {
+    .player .body-front::after {
       left: auto;
       right: 1px; }
-  .car .body-back {
+  .player .body-back {
     transform: translateY(93.8px) translateZ(19px) rotateX(90deg);
     height: 11px;
     background-color: #9de094; }
-    .car .body-back::before {
+    .player .body-back::before {
       content: '';
       position: absolute;
       left: 0;
@@ -413,31 +413,31 @@ button {
       width: 100%;
       height: 40%;
       background-color: #aaaaaa; }
-  .car .body-back-windshield {
+  .player .body-back-windshield {
     transform-origin: 0 0;
     transform: translateY(74px) translateZ(39px) rotateX(-31deg);
     height: 29px; }
-  .car .body-left,
-  .car .body-right,
-  .car .body-left-top,
-  .car .body-right-top {
+  .player .body-left,
+  .player .body-right,
+  .player .body-left-top,
+  .player .body-right-top {
     transform-origin: 0 0;
     width: 33px;
     height: 100px;
     background-color: transparent;
     background-image: url(pinto.svg);
     background-size: 33px; }
-  .car .body-left {
+  .player .body-left {
     width: 17px;
     transform: translateX(0) translateZ(8px) rotateY(-90deg); }
-  .car .body-left-top {
+  .player .body-left-top {
     width: 15px;
     transform: translateX(0) translateZ(25px) rotateY(-80deg);
     background-position: right 0; }
-  .car .body-right {
+  .player .body-right {
     width: 17px;
     transform: translateX(33px) translateZ(8px) rotateY(-90deg); }
-  .car .body-right-top {
+  .player .body-right-top {
     width: 15px;
     transform: translateX(33px) translateZ(25px) rotateY(-100deg);
     background-position: right 0; }
