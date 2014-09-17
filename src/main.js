@@ -1,4 +1,4 @@
-/*! Super Pinto Rally Racer - v0.9 - 2014-09-16
+/*! Super Pinto Rally Racer - v0.9 - 2014-09-17
 * Copyright (c) 2014 ; Licensed  */
 Element.prototype.on = Element.prototype.addEventListener;
 Element.prototype.off = Element.prototype.removeEventListener;
@@ -237,15 +237,31 @@ var Camera = (function () {
   };
 })();
 var Cone = (function () {
+
   return {
     create: function (color, player) {
-      var _ = {};
+      var _ = {},
+          rotatedPos = { x: 0, y: 0 };
+
       Templatable(_, 'cone');
       Positionable(_);
       Rotatable(_);
       Scalable(_);
       Renderable(_);
       Physicsable(_);
+
+      _.width = 20;
+      _.height = 20;
+      _.padding = 3;
+
+      _.worldToPlayer = function () {
+        var angle = player.rotation.z * (Math.PI/180),
+            localX = player.pos.x - _.pos.x,
+            localY = player.pos.y - _.pos.y;
+
+        rotatedPos.x = -Math.cos(angle) * (localX) - Math.sin(angle) * (localY);
+        rotatedPos.y = Math.sin(angle) * (localX) + Math.cos(angle) * (localY);
+      };
 
       _.setHidden = function (n) {
         if (n) {
@@ -277,11 +293,14 @@ var Cone = (function () {
       };
 
       _.update = function () {
-        var isHitX = _.pos.x > player.pos.x - 20 && _.pos.x < player.pos.x + 35,
-            isHitY = _.pos.y + 30 < player.pos.y && _.pos.y + 60 > player.pos.y,
+        var isHitX = rotatedPos.x > -_.width - _.padding && rotatedPos.x < player.width + _.padding,
+            isHitY = rotatedPos.y < _.height && rotatedPos.y > -player.height,
             isHit = isHitX && isHitY && !_isHidden;
 
-        if (isHit) {
+        _.worldToPlayer();
+
+
+        if (isHit && !_.isHit) {
           if (!_.el.classList.contains('cone-fall')) {
             _.rotation.z = rand(0,40);
             body.trigger(new CustomEvent('hit-cone',{detail: {cone:_}}));
@@ -290,7 +309,7 @@ var Cone = (function () {
           _.isHit = true;
         }
 
-        if (_.pos.y > player.pos.y && !_.isHit) {
+        if (_.pos.y > player.pos.y + player.height  && !_.isHit) {
           body.trigger(new CustomEvent('reset-cone-combo'));
 
           if ($('.combo-counter-animate').classList.contains('show')) {

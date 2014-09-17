@@ -34,8 +34,9 @@ body {
   overflow: hidden;
   font-family: "Futura", "Helvetica Nueue", sans-serif;
   color: #fff;
-  -webkit-user-select: none;
   cursor: default;
+  -webkit-user-select: none;
+  -webkit-font-smoothing: antialiased;
 }
 ul {
   text-align: left;
@@ -72,7 +73,7 @@ em {
   width: 100%;
   height: 100%;
   opacity: 0;
-  -webkit-transition: opacity 2s;
+  transition: opacity 2s;
 
   &.show {
     opacity: 1;
@@ -128,7 +129,6 @@ button {
 }
 
 #game-canvas {
-  // -webkit-filter: blur(0px);
   position: relative;
   margin: 0;
   padding: 0;
@@ -160,12 +160,6 @@ button {
   transform-origin: 50% 50%;
   -webkit-backface-visibility: hidden;
 
-
-  // -webkit-animation-name: cameraSpin;
-  // -webkit-animation-duration: 16s;
-  // -webkit-animation-iteration-count: infinite;
-  // -webkit-animation-timing-function: linear;
-
   * {
     position: absolute;
     top: 0;
@@ -182,9 +176,6 @@ button {
     transform: translate3d(0px, -170px, 600px) scale3d(1, 1, 1) rotateX(75deg) rotateZ(360deg) rotateY(0deg)
   }
 }
-
-// translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(75deg) rotateZ(0deg) rotateY(0deg);
-
 
 .game-paused {
   .car-animate,
@@ -238,11 +229,6 @@ $car_chrome_color: #aaa;
   width: $car_width;
   height: $car_height;
   transform-style: preserve-3d;
-
-  // -webkit-animation-name: spinZ;
-  // -webkit-animation-duration: 16s;
-  // -webkit-animation-iteration-count: infinite;
-  // -webkit-animation-timing-function: linear;
 
   .body {
     transform-style: preserve-3d;
@@ -554,7 +540,6 @@ $cone_color_green: #ABC78D;
       border-width: 30px 6px 0 6px;
       width: 0;
       height: 0;
-      // -webkit-backface-visibility: hidden;
     }
     &::before {
       border-color: darken($cone_color,12%) transparent transparent;
@@ -562,7 +547,6 @@ $cone_color_green: #ABC78D;
     }
     &::after {
       border-color: darken($cone_color,6%) transparent transparent;
-      // border-color: darken($cone_color,25%) transparent transparent;
       transform: rotateX(-11deg) rotateY(-0deg) rotateZ(0deg) translateZ(0px);
     }
   }

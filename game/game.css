@@ -196,8 +196,9 @@ body {
   overflow: hidden;
   font-family: "Futura", "Helvetica Nueue", sans-serif;
   color: #fff;
+  cursor: default;
   -webkit-user-select: none;
-  cursor: default; }
+  -webkit-font-smoothing: antialiased; }
 
 ul {
   text-align: left;
@@ -233,7 +234,7 @@ em {
   width: 100%;
   height: 100%;
   opacity: 0;
-  -webkit-transition: opacity 2s; }
+  transition: opacity 2s; }
   .bg-gradient.show {
     opacity: 1; }
 
