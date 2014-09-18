@@ -241,7 +241,8 @@ var Cone = (function () {
   return {
     create: function (color, player) {
       var _ = {},
-          rotatedPos = { x: 0, y: 0 };
+          rotatedPos = { x: 0, y: 0 },
+          tunnelPos = { x: 0, y: 0 };
 
       Templatable(_, 'cone');
       Positionable(_);
@@ -253,15 +254,6 @@ var Cone = (function () {
       _.width = 20;
       _.height = 20;
       _.padding = 3;
-
-      _.worldToPlayer = function () {
-        var angle = player.rotation.z * (Math.PI/180),
-            localX = player.pos.x - _.pos.x,
-            localY = player.pos.y - _.pos.y;
-
-        rotatedPos.x = -Math.cos(angle) * (localX) - Math.sin(angle) * (localY);
-        rotatedPos.y = Math.sin(angle) * (localX) + Math.cos(angle) * (localY);
-      };
 
       _.setHidden = function (n) {
         if (n) {
@@ -292,13 +284,33 @@ var Cone = (function () {
         return _;
       };
 
-      _.update = function () {
-        var isHitX = rotatedPos.x > -_.width - _.padding && rotatedPos.x < player.width + _.padding,
-            isHitY = rotatedPos.y < _.height && rotatedPos.y > -player.height,
+      _.worldToPlayer = function () {
+        var angle = player.rotation.z * (Math.PI/180),
+            localX = player.pos.x - _.pos.x,
+            localY = player.pos.y - _.pos.y;
+
+        rotatedPos.x = -Math.cos(angle) * (localX) - Math.sin(angle) * (localY);
+        rotatedPos.y = Math.sin(angle) * (localX) + Math.cos(angle) * (localY);
+      };
+
+      _.checkCollision = function (pos) {
+        var isHitX = pos.x > -_.width - _.padding && pos.x < player.width + _.padding,
+            isHitY = pos.y < _.height && pos.y > -player.height,
             isHit = isHitX && isHitY && !_isHidden;
+
+        return isHit;
+      };
+
+      _.update = function () {
 
         _.worldToPlayer();
 
+        // tunneling prevention
+        // tunnelPos.x = (rotatedPos.x + _.prevX) * 0.5;
+        // tunnelPos.y = (rotatedPos.y + _.prevY) * 0.5;
+        // var isHit = _.checkCollision(rotatedPos) ? true : _.checkCollision(tunnelPos);
+
+        var isHit = _.checkCollision(rotatedPos);
 
         if (isHit && !_.isHit) {
           if (!_.el.classList.contains('cone-fall')) {
@@ -319,6 +331,8 @@ var Cone = (function () {
           }
         }
 
+        _.prevX = rotatedPos.x;
+        _.prevY = rotatedPos.y;
         return _;
       };
 

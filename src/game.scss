@@ -1,18 +1,14 @@
 $level_width: 604px;
 $level_height: 2000px;
 
-
 $bg_color: linear-gradient(180deg, #283048 0%, #859398 100%);
 $bg_color: linear-gradient(180deg, #EC6F66 0%, #F3A183 100%);
 $bg_color: linear-gradient(180deg, #C04848 0%, #480048 100%);
 $bg_color: linear-gradient(180deg, #182848 0%, #4b6cb7 100%);
 $bg_color: linear-gradient(180deg, #003973 0%, #E5E5BE 100%);
 
-
 // default
 $bg_color: linear-gradient(180deg, #757F9A 0%, #D7DDE8 100%);
-
-
 
 $road_color: transparent;
 $road_grid_color: rgba(255,255,255,.3);
@@ -24,7 +20,6 @@ $primary_color: #3CD3AD;
 
 $default_camera_view:
   translate3d(0px, -170px, 600px) scale3d(1, 1, 1) rotateX(75deg) rotateZ(0deg) rotateY(0deg);
-  // rotateX(75deg) rotateZ(0deg) translateX(269px) translateY(-4907px) translateZ(-205px); // close up
 
 @import "animations";
 body {
